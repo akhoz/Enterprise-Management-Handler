@@ -106,6 +106,86 @@ void add_staff() {
 	std::cout << "Employee added successfully" << std::endl;
 }
 
+void remove_staff() {
+	//This is a function that removes an employee from the staff roster
+	//Recieves nothing
+	//Returns nothing
+
+	string staff_id;
+	std::cout << "Type the id of the employee you want to remove: ";
+	std::cin >> staff_id;
+
+	Staff* current = staff_roster; //Create a pointer to the current node
+	while (current) { //While the current node is not null, search for the employee
+		if (current->staff_id == staff_id) { //If the employee is found, remove it from the staff roster
+			if (current->prev) {
+				current->prev->next = current->next; //The previous node of the current node points to the next node of the current node
+			}
+			if (current->next) {
+				current->next->prev = current->prev; //The next node of the current node points to the previous node of the current node
+			}
+			delete current; //Delete the current node in order to free memory
+			return;
+		}
+		current = current->next;
+	}
+}
+
+void modify_staff(string staff_id) {
+	//This function modifies the information of an employee
+	//Recieves the id of the employee
+	//Returns nothing
+
+	string property_to_change;
+	std::cout << "Type the property you want to change: ";
+	std::cin >> property_to_change;
+
+	Staff* current = staff_roster; //Create a pointer to the current node
+	Staff* staff_to_modify = nullptr; //Create a pointer to the employee to modify, set it to null
+
+	while (current) {
+		if (current->staff_id == staff_id) { //If the employee is found, set the staff to modify pointer to the current node
+			staff_to_modify = current; //Set the staff to modify pointer to the current node
+			break;
+		}
+		current = current->next;
+	}
+
+	if (!staff_to_modify) { //If the employee is not found, exit the function
+		std::cout << "No employee found with that id" << std::endl;
+		return;
+	}
+
+	//Case comparison, this is to determine which property of the employee to change
+	if (property_to_change == "id") { //If the property to change is the id, change the id of the employee
+		std::cout << "New id: ";
+		std::cin >> staff_to_modify->staff_id;
+	}
+	else if (property_to_change == "job_title") { //If the property to change is the job title, change the job title of the employee
+		std::cout << "New job title: ";
+		std::cin >> staff_to_modify->job_title;
+	}
+	else if (property_to_change == "salary_bonuses") { //If the property to change is the salary bonuses, change the salary bonuses of the employee
+		std::cout << "New salary bonuses: ";
+		std::cin >> staff_to_modify->salary_bonuses;
+	}
+	else if (property_to_change == "job_performed") { //If the property to change is the job performed, change the job performed of the employee
+		std::cout << "New job performed: ";
+		std::cin >> staff_to_modify->job_performed;
+	}
+	else if (property_to_change == "employment_sector") { //If the property to change is the employment sector, change the employment sector of the employee
+		std::cout << "New employment sector: ";
+		std::cin >> staff_to_modify->employment_sector;
+	}
+	else if (property_to_change == "boss") { //If the property to change is the boss, change the boss of the employee
+		assignBoss(staff_to_modify->staff_id);
+	}
+	else { //If the property to change is not found, exit the function
+		std::cout << "Property not found" << std::endl;
+		return;
+	}
+}
+
 void sort_by_sector() {
 	//This is a function that sorts the staff roster by sector
 	//Recieves nothing
