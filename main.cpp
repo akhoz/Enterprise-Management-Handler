@@ -47,7 +47,7 @@ void print_linked_list(T*& linked_list) {
 
 }
 
-void assignBoss(string new_staff_id) {
+void assign_boss(string new_staff_id) {
 	//This is a function that assigns a boss to an employee
 	//It receives the id of the employee
 	//Returns nothing
@@ -101,7 +101,7 @@ void add_staff() {
 	double_append_end(staff_roster, new_staff); //Append the new employee to the staff roster
 
 	if (new_staff->job_title != "boss") //If the employee is not the boss, assign a boss to the employee
-		assignBoss(new_staff->staff_id); //Assign the boss of the employee
+		assign_boss(new_staff->staff_id); //Assign the boss of the employee
 
 	std::cout << "Employee added successfully" << std::endl;
 }
@@ -178,7 +178,7 @@ void modify_staff(string staff_id) {
 		std::cin >> staff_to_modify->employment_sector;
 	}
 	else if (property_to_change == "boss") { //If the property to change is the boss, change the boss of the employee
-		assignBoss(staff_to_modify->staff_id);
+		assign_boss(staff_to_modify->staff_id);
 	}
 	else { //If the property to change is not found, exit the function
 		std::cout << "Property not found" << std::endl;
@@ -280,6 +280,7 @@ int main() {
 	std::cout << std::endl;
 	std::cout << std::endl;
 	sort_by_job_title();
+	modify_staff("2");
 	print_linked_list(staff_roster);
 
 	return 0;
