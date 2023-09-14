@@ -8,6 +8,7 @@ using std::string;
 //Staff struct, used to store the information of the employees and create the Staff Roster linked list
 class Staff {
 public:
+    int salary = 0;
 	string staff_id; //Unique identifier of the employee
 	string job_title; //Kind of employee
 	string salary_bonuses; //Such as experience or other bonuses
@@ -30,7 +31,17 @@ public:
 		//this->workdays = workdays;
 		this->next = nullptr;
 		this->prev = nullptr;
-	}	
+	}
+    Staff(){
+        this->staff_id = "";
+        this->job_title = "";
+        this->salary_bonuses = "";
+        this->job_performed = "";
+        this->employment_sector = "";
+        this->boss = nullptr;
+        this->next = nullptr;
+        this->prev = nullptr;
+    }
 
 	//Overload of the << operator, used to print the information of the employee
 	friend std::ostream& operator<<(std::ostream& os, const Staff& staff) {
@@ -41,13 +52,11 @@ public:
 		os << "Employment Sector: " << staff.employment_sector << std::endl;
 		os << "Boss: ";
 		if (staff.boss) {
-			os << staff.boss->staff_id;
+			os << staff.boss->staff_id << "\n";
 		}
 		else {
-			os << "None";
+			os << "None" << "\n";
 		}
-        os << "Workdays: " << staff.workdays << std::endl;
-		os << "\n";
 		return os;
 	}
 };

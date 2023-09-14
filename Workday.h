@@ -14,7 +14,7 @@ public:
 	Workday* next; //Next workday in the list
 
 	//Constructor
-	Workday(string day, string start_time, string end_time, bool is_holiday, bool is_weekend) {
+	Workday(string start_time, string end_time, bool is_holiday, bool is_weekend) {
 		//This is the constructor of the Workday struct, it receives all the information of the workday and creates the object, returns nothing
 		this->start_time = start_time;
 		this->end_time = end_time;
@@ -29,26 +29,12 @@ public:
         this->is_holiday = false;
         this->next = nullptr;
     }
-    friend std::ostream& operator<<(std::ostream& os, const Workday& workday) {
-        os << "Start Time: " << workday.start_time << std::endl;
-        os << "End Time: " << workday.end_time << std::endl;
-        os << "Is it a holiday? ";
-        if (workday.is_holiday) {
-            os << "Yes" << std::endl;
-        }
-        else {
-            os << "No" << std::endl;
-        }
-        os << "Is it a weekend? ";
-        if (workday.is_weekend) {
-            os << "Yes" << std::endl;
-        }
-        else {
-            os << "No" << std::endl;
-        }
-        os << "\n";
-        return os;
+    void print(){
+        std::cout << "Start Time: " << start_time << std::endl;
+        std::cout << "End Time: " << end_time << std::endl;
+        std::cout << "Worked Hours: " << worked_hours << std::endl;
+        std::cout << "Is Holiday: " << is_holiday << std::endl;
+        std::cout << "Is Weekend: " << is_weekend << std::endl;
+        std::cout << "\n";
     }
-
-
-};
+    };

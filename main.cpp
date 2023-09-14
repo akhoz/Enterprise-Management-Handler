@@ -27,6 +27,19 @@ void double_append_end(T*& linked_list, T*& element_to_append) {
 	element_to_append->prev = current;
 }
 
+Staff* findStaffById(const string& id) {
+    Staff* current = people_list;
+    while (current) {
+        if (current->staff_id == id) {
+            std::cout << "The person has been found" << std::endl;
+            return current;
+        }
+        current = current->next;
+    }
+    return nullptr; // Si no se encuentra la persona con el ID dado
+}
+
+
 template <typename T>
 void print_linked_list(T*& linked_list) {
 	T* current = linked_list; 
@@ -34,17 +47,13 @@ void print_linked_list(T*& linked_list) {
 		std::cout << *current << std::endl;
 		current = current->next;
 	}
-
 }
-void addWorkday(Staff*& staff, Workday workday) {
-    if (staff->workdays == nullptr) {
-        staff->workdays = &workday;
-    }
-    else {
-        Workday* current = staff->workdays;
-        while (staff->workdays->next != nullptr) {
-            staff->workdays = staff->workdays->next;
-        }
+
+void print_person_workday(Staff*& person) {
+    Workday* current = person->workdays;
+    while (current) {
+        current->print();
+        current = current->next;
     }
 }
 
@@ -64,47 +73,74 @@ int worked_hours(const string& start, const string& end){
 
     int seconds = difftime(t_fin, t_inicio);
     int hours = seconds / 3600;
-    printf("Horas trabajadas: %d\n", hours);
     return hours;
 
 }
 
 void registerHours(Staff*& staff) {
-    Workday workday;
-    string start_time;
-    string end_time;
-    std::cout << "Enter the start time: ";
-    std::cin >> start_time;
-    std::cout << "Enter the end time: ";
-    std::cin >> end_time;
-    std::cout << "Is it a holiday? (y/n): ";
-    char holiday;
+    Workday *workday = new Workday();
+    string weeknd;
+    string holiday;
+    std::cout << "Enter the start hour: \n";
+    std::cin >> workday->start_time;
+    std::cout << "Enter the end hour: \n";
+    std::cin >> workday->end_time;
+    std::cout << "Is it a weekend? (y/n): \n";
+    std::cin >> weeknd;
+    std::cout << "Is it a holiday? (y/n): \n";
     std::cin >> holiday;
-    std::cout << "Is it a weekend? (y/n): ";
-    char weekend;
-    std::cin >> weekend;
-    workday.worked_hours = worked_hours(start_time, end_time);
-    if (holiday == 'y') {
-        workday.is_holiday = true;
+    if (weeknd == "y") {
+         workday->is_weekend = true;
     }
     else {
-        workday.is_holiday = false;
+        workday->is_weekend = false;
     }
-    if (weekend == 'y') {
-        workday.is_weekend = true;
+    if (holiday == "y") {
+        workday->is_holiday = true;
     }
     else {
-        workday.is_weekend = false;
+        workday->is_holiday = false;
+    }
+    workday->worked_hours = worked_hours(workday->start_time, workday->end_time);
+    // Add the workday to the staff workdays list
+    if (staff->workdays == nullptr) {
+        staff->workdays = workday;
+    }
+    else {
+        Workday* current = staff->workdays;
+        while (current->next) {
+            current = current->next;
+        }
+        current->next = workday;
     }
 
-    if (staff->workdays == nullptr) {
-        staff->workdays = &workday;
-    }
-    else {
-        addWorkday(staff, workday);
-    }
-    /* system("clear"); */
 }
+
+void set_salary(Staff*& person){
+    int user_worked_hours = 0;
+    Workday* current = person->workdays;
+    if (current == nullptr) {
+        std::cout << "The user has not worked yet" << std::endl;
+        return;
+    }
+    while (current) {
+        if (current->is_weekend == true) {
+            user_worked_hours += current->worked_hours * 2;
+        }
+        else if (current->is_holiday == true) {
+            user_worked_hours += current->worked_hours * 3;
+        }
+        else {
+            user_worked_hours += current->worked_hours;
+        }
+        current = current->next;
+    }
+    person->salary = user_worked_hours * 100;
+    std::cout << "The salary of the user is: " << person->salary << std::endl;
+}
+
+
+
 int main() {
 
 	Staff* first_staff = new Staff("hola", "Boss", "experience", "Managment", "Administration sector", "");
@@ -112,8 +148,14 @@ int main() {
 
 	double_append_end(people_list, first_staff);
 	double_append_end(people_list, second_staff);
-    registerHours(second_staff);
-	/* print_linked_list(people_list); */
+	print_linked_list(people_list);
+    std::cout << "Enter the id of the person you want to register hours: ";
+    string id;
+    std::cin >> id;
+    Staff* person = findStaffById(id);
+    registerHours(person);
+    print_person_workday(person);
+    set_salary(person);
 
 	return 0;
 }
