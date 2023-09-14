@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include "Workday.h"
 #pragma once
 
 using std::string;
@@ -12,7 +13,7 @@ public:
 	string salary_bonuses; //Such as experience or other bonuses
 	string job_performed; //What the employee does
 	string employment_sector; //Sector where the staff performs his job, for example, production line
-	//Workday* workdays; //Workdays of the employee
+	Workday* workdays; //Workdays of the employee
 	Staff* boss; //Boss of the employee, null if the employee is the boss
 	Staff* next; //Next employee in the list
 	Staff* prev; //Previous employee in the list
@@ -45,29 +46,9 @@ public:
 		else {
 			os << "None";
 		}
+        os << "Workdays: " << staff.workdays << std::endl;
 		os << "\n";
 		return os;
 	}
 };
 
-//Workday struct, used to store the information of the workdays of the employees
-class Workday {
-public:
-	string day; //Day of the week
-	string start_time; //Start time of the workday
-	string end_time; //End time of the workday
-	bool is_holiday; //If the day is a holiday, if the employee worked that day, he will get a bonus
-	bool is_weekend; //If the day is a weekend, if the employee worked that day, he will get a bonus
-	Workday* next; //Next workday in the list
-
-	//Constructor
-	Workday(string day, string start_time, string end_time, bool is_holiday, bool is_weekend) {
-		//This is the constructor of the Workday struct, it receives all the information of the workday and creates the object, returns nothing
-		this->day = day;
-		this->start_time = start_time;
-		this->end_time = end_time;
-		this->is_holiday = is_holiday;
-		this->is_weekend = is_weekend;
-		this->next = nullptr;
-	}
-};
