@@ -39,8 +39,6 @@ void print_linked_list(T*& linked_list) {
 
 	T* current = linked_list; //Create a pointer to the current node
 	while (current) { //While the current node is not null, print the data of the current node and move to the next node
-
-		//if (current->boss != nullptr)
 		std::cout << *current << std::endl;
 		current = current->next;
 	}
@@ -124,7 +122,11 @@ void remove_staff() {
 			if (current->next) {
 				current->next->prev = current->prev; //The next node of the current node points to the previous node of the current node
 			}
+			if (current == staff_roster) {
+				staff_roster = current->next; //If the current node is the first node, set the staff roster to the next node of the current node
+			}
 			delete current; //Delete the current node in order to free memory
+			std::cout << "Employee removed successfully" << std::endl;
 			return;
 		}
 		current = current->next;
@@ -280,7 +282,8 @@ int main() {
 	std::cout << std::endl;
 	std::cout << std::endl;
 	sort_by_job_title();
-	modify_staff("2");
+	//modify_staff("2");
+	remove_staff();
 	print_linked_list(staff_roster);
 
 	return 0;
