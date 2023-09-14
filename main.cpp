@@ -4,6 +4,7 @@
 using std::string;
 
 template <typename T> //This is a template function, it can take any type of data, this is used avoid code duplication, such as having to write the same function for different structs or linked lists
+
 void double_append_end(T*& linked_list, T*& element_to_append) {
 	//This is a function that appends an element to the end of a double linked list
 	//It receives a pointer to the linked list and a pointer to the element to append
