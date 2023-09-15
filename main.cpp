@@ -3,22 +3,45 @@
 #include <string>
 #include <cstdlib>
 #include "staff_roster.h"
+#include "Workday.h"
+#include "inventory.h"
 
 using std::string;
 using std::tm;
 
-Staff* people_list = nullptr;
-
 
 //Linked lists
 Staff* staff_roster = nullptr; //Create a pointer to the staff roster linked list, set it to null
+Category* inventory = nullptr; //Create a pointer to the inventory linked list, set it to null
+
+
+
+//General purpose functions
+
 
 
 template <typename T> //This is a template function, it can take any type of data, this is used avoid code duplication, such as having to write the same function for different structs or linked lists
+void lineal_append_end(T*& linked_list, T*& element_to_append) {
+	//This function appends an element to the end of a lineal linked list
+	//It receives the linked list and the element to append 
+	//Returns nothing
 
+	if (!linked_list) {
+		linked_list = element_to_append; //If the linked list is empty, the linked list is the element to append
+		return; //Returns nothing
+	}
+
+	T* current = linked_list;
+	while (current->next) {
+		current = current->next;
+	}
+	current->next = element_to_append; //The next element of the linked list is the element to append
+}
+
+template <typename T>
 void double_append_end(T*& linked_list, T*& element_to_append) {
 	if (!element_to_append) { //If the element to append is null
-		return; 
+		return;
 	}
 
 	if (!linked_list) { //If the linked list is empty
@@ -32,24 +55,34 @@ void double_append_end(T*& linked_list, T*& element_to_append) {
 	}
 	current->next = element_to_append; //Set the next node to the new element
 	element_to_append->prev = current; //Set the previous node of the new element to the current node
-	if (!linked_list) { 
-			linked_list = element_to_append; 
-			return;
+	if (!linked_list) {
+		linked_list = element_to_append;
+		return;
 	}
 }
 
-Staff* findStaffById(const string& id) {
-    Staff* current = people_list;
-    while (current) {
-        if (current->staff_id == id) {
-            std::cout << "The person has been found" << std::endl;
-            return current;
-        }
-        current = current->next;
-    }
-    return nullptr; // Si no se encuentra la persona con el ID dado
-}
+template <typename T>
+void double_circular_append_end(T*& linked_list, T*& element_to_append) {
+	//This function appends an element to the end of a double circular linked list
+	//Receives the linked list and the element to append
+	//Returns nothing
 
+	if (!linked_list) { //If the linked list is empty
+		linked_list = element_to_append; //The linked list is the element to append
+		linked_list->next = linked_list; //The next element of the linked list is itself
+		linked_list->prev = linked_list; //The previous element of the linked list is itself
+		return; //Returns nothing
+	}
+
+	T* current = linked_list;
+	while (current->next != linked_list) { //While the next element of the current element is not the first element of the linked list
+		current = current->next;
+	}
+	current->next = element_to_append; //The next element of the current element is the element to append
+	element_to_append->prev = current; //The previous element of the element to append is the current element
+	element_to_append->next = linked_list; //The next element of the element to append is the first element of the linked list
+	linked_list->prev = element_to_append; //The previous element of the first element of the linked list is the element to append
+}
 
 template <typename T>
 void print_linked_list(T*& linked_list) {
@@ -59,20 +92,38 @@ void print_linked_list(T*& linked_list) {
 
 	T* current = linked_list; //Create a pointer to the current node
 	while (current) { //While the current node is not null, print the data of the current node and move to the next node
-	T* current = linked_list; 
+		T* current = linked_list;
+		while (current) {
+			std::cout << *current << std::endl;
+			current = current->next;
+		}
+	}
+}
+
+
+
+//Staff roster functions
+
+
+
+Staff* findStaffById(const string& id) {
+	Staff* current = staff_roster;
 	while (current) {
-		std::cout << *current << std::endl;
+		if (current->staff_id == id) {
+			std::cout << "The person has been found" << std::endl;
+			return current;
+		}
 		current = current->next;
-	    }
-    }
+	}
+	return nullptr; // Si no se encuentra la persona con el ID dado
 }
 
 void print_person_workday(Staff*& person) {
-    Workday* current = person->workdays;
-    while (current) {
-        current->print();
-        current = current->next;
-    }
+	Workday* current = person->workdays;
+	while (current) {
+		current->print();
+		current = current->next;
+	}
 }
 
 void assign_boss(string new_staff_id) {
@@ -287,86 +338,127 @@ void sort_by_job_title() {
 }
 
 tm parseHour(const string& hora) {
-    tm tiempo = {};
-    strptime(hora.c_str(), "%H:%M", &tiempo);
-    return tiempo;
+	tm tiempo = {};
+	strptime(hora.c_str(), "%H:%M", &tiempo);
+	return tiempo;
 }
 
-int worked_hours(const string& start, const string& end){
-    tm parsed_start = parseHour(start);
-    tm parsed_end = parseHour(end);
+int worked_hours(const string& start, const string& end) {
+	tm parsed_start = parseHour(start);
+	tm parsed_end = parseHour(end);
 
-    time_t t_inicio = mktime(&parsed_start);
-    time_t t_fin = mktime(&parsed_end);
+	time_t t_inicio = mktime(&parsed_start);
+	time_t t_fin = mktime(&parsed_end);
 
-    int seconds = difftime(t_fin, t_inicio);
-    int hours = seconds / 3600;
-    return hours;
+	int seconds = difftime(t_fin, t_inicio);
+	int hours = seconds / 3600;
+	return hours;
 
 }
 
 void registerHours(Staff*& staff) {
-    Workday *workday = new Workday();
-    string weeknd;
-    string holiday;
-    std::cout << "Enter the start hour: \n";
-    std::cin >> workday->start_time;
-    std::cout << "Enter the end hour: \n";
-    std::cin >> workday->end_time;
-    std::cout << "Is it a weekend? (y/n): \n";
-    std::cin >> weeknd;
-    std::cout << "Is it a holiday? (y/n): \n";
-    std::cin >> holiday;
-    if (weeknd == "y") {
-         workday->is_weekend = true;
-    }
-    else {
-        workday->is_weekend = false;
-    }
-    if (holiday == "y") {
-        workday->is_holiday = true;
-    }
-    else {
-        workday->is_holiday = false;
-    }
-    workday->worked_hours = worked_hours(workday->start_time, workday->end_time);
-    // Add the workday to the staff workdays list
-    if (staff->workdays == nullptr) {
-        staff->workdays = workday;
-    }
-    else {
-        Workday* current = staff->workdays;
-        while (current->next) {
-            current = current->next;
-        }
-        current->next = workday;
-    }
+	Workday* workday = new Workday();
+	string weeknd;
+	string holiday;
+	std::cout << "Enter the start hour: \n";
+	std::cin >> workday->start_time;
+	std::cout << "Enter the end hour: \n";
+	std::cin >> workday->end_time;
+	std::cout << "Is it a weekend? (y/n): \n";
+	std::cin >> weeknd;
+	std::cout << "Is it a holiday? (y/n): \n";
+	std::cin >> holiday;
+	if (weeknd == "y") {
+		workday->is_weekend = true;
+	}
+	else {
+		workday->is_weekend = false;
+	}
+	if (holiday == "y") {
+		workday->is_holiday = true;
+	}
+	else {
+		workday->is_holiday = false;
+	}
+	workday->worked_hours = worked_hours(workday->start_time, workday->end_time);
+	// Add the workday to the staff workdays list
+	if (staff->workdays == nullptr) {
+		staff->workdays = workday;
+	}
+	else {
+		Workday* current = staff->workdays;
+		while (current->next) {
+			current = current->next;
+		}
+		current->next = workday;
+	}
 
 }
 
-void set_salary(Staff*& person){
-    int user_worked_hours = 0;
-    Workday* current = person->workdays;
-    if (current == nullptr) {
-        std::cout << "The user has not worked yet" << std::endl;
-        return;
-    }
-    while (current) {
-        if (current->is_weekend == true) {
-            user_worked_hours += current->worked_hours * 2;
-        }
-        else if (current->is_holiday == true) {
-            user_worked_hours += current->worked_hours * 3;
-        }
-        else {
-            user_worked_hours += current->worked_hours;
-        }
-        current = current->next;
-    }
-    person->salary = user_worked_hours * 100;
-    std::cout << "The salary of the user is: " << person->salary << std::endl;
+void set_salary(Staff*& person) {
+	int user_worked_hours = 0;
+	Workday* current = person->workdays;
+	if (current == nullptr) {
+		std::cout << "The user has not worked yet" << std::endl;
+		return;
+	}
+	while (current) {
+		if (current->is_weekend == true) {
+			user_worked_hours += current->worked_hours * 2;
+		}
+		else if (current->is_holiday == true) {
+			user_worked_hours += current->worked_hours * 3;
+		}
+		else {
+			user_worked_hours += current->worked_hours;
+		}
+		current = current->next;
+	}
+	person->salary = user_worked_hours * 100;
+	std::cout << "The salary of the user is: " << person->salary << std::endl;
 }
 
+
+
+//Inventory functions
+
+
+
+void stock_inquiry(Category*& selected_category) {
+	//This is a function that prints the products of a category
+	//It receives a pointer to the category
+	//Returns nothing
+
+	Category* current = inventory; //Create a pointer to the current node
+	while (current) {
+		if (current->category_name == selected_category->category_name) { //If the current node is the selected category, print the products of the category
+			print_linked_list(current->products);
+			return; //Return nothing
+		}
+		current = current->next;
+	}
+}
+
+
+void state_inquiry(string serial_number) {
+	//This is a function that prints the state of a product
+	//It receives the serial number of the product
+	//Returns nothing
+
+	Category* current = inventory; //Create a pointer to the current node
+	while (current) {
+		if (current->products->serial_number == serial_number) { //If the current node is the product, stop the search
+			break;
+			current = current->next;
+		}
+
+		Stage* current_stage = current->products->current_stage; //Create a pointer to the current stage of the product
+		while (current_stage->completed) { //While the current stage is completed, move to the next stage
+			current_stage = current_stage->next;
+		}
+		std::cout << "The product is in the " << current_stage->stage_name << " stage" << std::endl; //Print the current stage of the product
+	}
+}
 
 
 int main() {
@@ -398,16 +490,16 @@ int main() {
 	//modify_staff("2");
 	remove_staff();
 	print_linked_list(staff_roster);
-	double_append_end(people_list, first_staff);
-	double_append_end(people_list, second_staff);
-	print_linked_list(people_list);
-    std::cout << "Enter the id of the person you want to register hours: ";
-    string id;
-    std::cin >> id;
-    Staff* person = findStaffById(id);
-    registerHours(person);
-    print_person_workday(person);
-    set_salary(person);
+	double_append_end(staff_roster, first_staff);
+	double_append_end(staff_roster, second_staff);
+	print_linked_list(staff_roster);
+	std::cout << "Enter the id of the person you want to register hours: ";
+	string id;
+	std::cin >> id;
+	Staff* person = findStaffById(id);
+	registerHours(person);
+	print_person_workday(person);
+	set_salary(person);
 
 	return 0;
 }
