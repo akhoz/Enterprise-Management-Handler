@@ -1,26 +1,35 @@
+#include <Category.hh>
+#include <Product.hh>
+#include <Resource.hh>
+#include <Staff.hh>
+#include <Stage.hh>
+#include <Workday.hh>
+
+#include <cstdlib>
 #include <ctime>
 #include <iostream>
+#include <ostream>
 #include <string>
-#include <cstdlib>
-#include "staff_roster.h"
-#include "Workday.h"
-#include "inventory.h"
 
 using std::string;
 using std::tm;
 
+// Create a pointer to the staff roster linked list, set it to null
+Staff *staff_roster = nullptr;
 
-//Linked lists
-Staff* staff_roster = nullptr; //Create a pointer to the staff roster linked list, set it to null
-Category* inventory = nullptr; //Create a pointer to the inventory linked list, set it to null
+// Create a pointer to the inventory linked list, set it to null
+Category *inventory = nullptr;
 
+bool exit_menu = false;
 
+tm parse_hour(const string& hour) {
+    tm time = {};
+    strptime(hour.c_str(), "%H:%M", &time);
+    return time;
+}
 
-//General purpose functions
-
-
-
-template <typename T> //This is a template function, it can take any type of data, this is used avoid code duplication, such as having to write the same function for different structs or linked lists
+//This is a template function, it can take any type of data, this is used avoid code duplication, such as having to write the same function for different structs or linked lists 
+template <typename T>
 void lineal_append_end(T*& linked_list, T*& element_to_append) {
 	//This function appends an element to the end of a lineal linked list
 	//It receives the linked list and the element to append 
@@ -75,8 +84,10 @@ void double_circular_append_end(T*& linked_list, T*& element_to_append) {
 	}
 
 	T* current = linked_list;
-	while (current->next != linked_list) { //While the next element of the current element is not the first element of the linked list
-		current = current->next;
+
+    //While the next element of the current element is not the first element of the linked list
+	while (current->next != linked_list) { 
+       		current = current->next;
 	}
 	current->next = element_to_append; //The next element of the current element is the element to append
 	element_to_append->prev = current; //The previous element of the element to append is the current element
@@ -92,38 +103,10 @@ void print_linked_list(T*& linked_list) {
 
 	T* current = linked_list; //Create a pointer to the current node
 	while (current) { //While the current node is not null, print the data of the current node and move to the next node
-		T* current = linked_list;
-		while (current) {
-			std::cout << *current << std::endl;
-			current = current->next;
-		}
-	}
-}
-
-
-
-//Staff roster functions
-
-
-
-Staff* findStaffById(const string& id) {
-	Staff* current = staff_roster;
-	while (current) {
-		if (current->staff_id == id) {
-			std::cout << "The person has been found" << std::endl;
-			return current;
-		}
-		current = current->next;
-	}
-	return nullptr; // Si no se encuentra la persona con el ID dado
-}
-
-void print_person_workday(Staff*& person) {
-	Workday* current = person->workdays;
-	while (current) {
-		current->print();
-		current = current->next;
-	}
+        /* std::cout << *current << std::endl; */ // Error with this one
+        std::cout << current << std::endl;
+        current = current->next;
+    }
 }
 
 void assign_boss(string new_staff_id) {
@@ -141,7 +124,7 @@ void assign_boss(string new_staff_id) {
 	Staff* boss = nullptr; //Create a pointer that later will point to the boss of the employee
 	Staff* current = staff_roster; //Create a pointer to the current node
 	while (current) { //While the current node is not null, search for the boss of the employee
-		if (current->staff_id == boss_id) {
+		if (current->id == boss_id) {
 			boss = current; //Set the boss pointer to the current node
 			break;
 		}
@@ -150,7 +133,7 @@ void assign_boss(string new_staff_id) {
 
 	current = staff_roster;
 	while (current) { //While the current node is not null, search for the employee
-		if (current->staff_id == new_staff_id) {
+		if (current->id == new_staff_id) {
 			current->boss = boss; //Set the boss of the employee to the boss pointer
 			return;
 		}
@@ -167,7 +150,7 @@ void add_staff() {
 	Staff* new_staff = new Staff(); //Create a pointer to the new employee
 	std::cout << "Please fill the following information: " << std::endl;
 	std::cout << "Id: ";
-	std::cin >> new_staff->staff_id;
+	std::cin >> new_staff->id;
 	std::cout << "Job title: ";
 	std::cin >> new_staff->job_title;
 	std::cout << "Salary bonuses: ";
@@ -180,7 +163,7 @@ void add_staff() {
 	double_append_end(staff_roster, new_staff); //Append the new employee to the staff roster
 
 	if (new_staff->job_title != "boss") //If the employee is not the boss, assign a boss to the employee
-		assign_boss(new_staff->staff_id); //Assign the boss of the employee
+		assign_boss(new_staff->id); //Assign the boss of the employee
 
 	std::cout << "Employee added successfully" << std::endl;
 }
@@ -196,7 +179,7 @@ void remove_staff() {
 
 	Staff* current = staff_roster; //Create a pointer to the current node
 	while (current) { //While the current node is not null, search for the employee
-		if (current->staff_id == staff_id) { //If the employee is found, remove it from the staff roster
+		if (current->id == staff_id) { //If the employee is found, remove it from the staff roster
 			if (current->prev) {
 				current->prev->next = current->next; //The previous node of the current node points to the next node of the current node
 			}
@@ -213,7 +196,6 @@ void remove_staff() {
 		current = current->next;
 	}
 }
-
 void modify_staff(string staff_id) {
 	//This function modifies the information of an employee
 	//Recieves the id of the employee
@@ -227,7 +209,7 @@ void modify_staff(string staff_id) {
 	Staff* staff_to_modify = nullptr; //Create a pointer to the employee to modify, set it to null
 
 	while (current) {
-		if (current->staff_id == staff_id) { //If the employee is found, set the staff to modify pointer to the current node
+		if (current->id == staff_id) { //If the employee is found, set the staff to modify pointer to the current node
 			staff_to_modify = current; //Set the staff to modify pointer to the current node
 			break;
 		}
@@ -242,7 +224,7 @@ void modify_staff(string staff_id) {
 	//Case comparison, this is to determine which property of the employee to change
 	if (property_to_change == "id") { //If the property to change is the id, change the id of the employee
 		std::cout << "New id: ";
-		std::cin >> staff_to_modify->staff_id;
+		std::cin >> staff_to_modify->id;
 	}
 	else if (property_to_change == "job_title") { //If the property to change is the job title, change the job title of the employee
 		std::cout << "New job title: ";
@@ -261,7 +243,7 @@ void modify_staff(string staff_id) {
 		std::cin >> staff_to_modify->employment_sector;
 	}
 	else if (property_to_change == "boss") { //If the property to change is the boss, change the boss of the employee
-		assign_boss(staff_to_modify->staff_id);
+		assign_boss(staff_to_modify->id);
 	}
 	else { //If the property to change is not found, exit the function
 		std::cout << "Property not found" << std::endl;
@@ -269,83 +251,29 @@ void modify_staff(string staff_id) {
 	}
 }
 
-void sort_by_sector() {
-	//This is a function that sorts the staff roster by sector
-	//Recieves nothing
-	//Returns nothing
-
-	Staff* administration_sector = nullptr; //Create a pointer to the administration sector linked list, set it to null
-	Staff* production_sector = nullptr; //Create a pointer to the production sector linked list, set it to null
-	Staff* maintenance_sector = nullptr; //Create a pointer to the maintenance sector linked list, set it to null
-
-	Staff* current = staff_roster; //Create a pointer to the current node
-	Staff* next = nullptr; //Create a pointer to the next node
-	while (current) {
-		next = current->next; //Set the next node to the next node of the current node
-		current->next = nullptr; //Set the next node of the current node to null
-
-		if (current->employment_sector == "administration") { //If the current node is in the administration sector, append it to the administration sector linked list
-			double_append_end(administration_sector, current);
-		}
-		else if (current->employment_sector == "production") { //If the current node is in the production sector, append it to the production sector linked list
-			double_append_end(production_sector, current);
-		}
-		else if (current->employment_sector == "maintenance") { //If the current node is in the maintenance sector, append it to the maintenance sector linked list
-			double_append_end(maintenance_sector, current);
-		}
-		current = next;
-	}
-
-	Staff* new_staff_roster = nullptr; //Create a pointer to the new staff roster linked list, set it to null 
-	double_append_end(new_staff_roster, administration_sector);
-	double_append_end(new_staff_roster, production_sector);
-	double_append_end(new_staff_roster, maintenance_sector);
-	staff_roster = new_staff_roster; //Set the staff roster to the new staff roster
+Staff* find_staff_by_id(const string& id) {
+    Staff* current = staff_roster;
+    while (current) {
+        if (current->id == id) {
+            return current;
+        }
+        current = current->next;
+    }
+    return nullptr;
 }
 
-void sort_by_job_title() {
-	//This is a function that sorts the staff roster by job title
-	//Recieves nothing
-	//Returns nothing
-
-	Staff* boss = nullptr; //Create a pointer to the boss linked list, set it to null
-	Staff* employee = nullptr; //Create a pointer to the employee linked list, set it to null
-	Staff* intern = nullptr; //Create a pointer to the intern linked list, set it to null
-
-	Staff* current = staff_roster; //Create a pointer to the current node
-	Staff* next = nullptr; //Create a pointer to the next node
-	while (current) {
-		next = current->next; //Set the next node to the next node of the current node
-		current->next = nullptr; //Set the next node of the current node to null
-
-		if (current->job_title == "boss") { //If the current node is a boss, append it to the boss linked list
-			double_append_end(boss, current);
-		}
-		else if (current->job_title == "employee") { //If the current node is an employee, append it to the employee linked list
-			double_append_end(employee, current);
-		}
-		else if (current->job_title == "intern") { //If the current node is an intern, append it to the intern linked list
-			double_append_end(intern, current);
-		}
-		current = next;
-	}
-
-	Staff* new_staff_roster = nullptr; //Create a pointer to the new staff roster linked list, set it to null
-	double_append_end(new_staff_roster, boss);
-	double_append_end(new_staff_roster, employee);
-	double_append_end(new_staff_roster, intern);
-	staff_roster = new_staff_roster; //Set the staff roster to the new staff roster
+void print_workday(Staff*& staff) {
+    Workday* current = staff->workdays;
+    while (current) {
+        std::cout << current << std::endl;
+        current = current->next;
+    }
 }
 
-tm parseHour(const string& hora) {
-	tm tiempo = {};
-	strptime(hora.c_str(), "%H:%M", &tiempo);
-	return tiempo;
-}
 
 int worked_hours(const string& start, const string& end) {
-	tm parsed_start = parseHour(start);
-	tm parsed_end = parseHour(end);
+	tm parsed_start = parse_hour(start);
+	tm parsed_end = parse_hour(end);
 
 	time_t t_inicio = mktime(&parsed_start);
 	time_t t_fin = mktime(&parsed_end);
@@ -392,7 +320,6 @@ void registerHours(Staff*& staff) {
 		}
 		current->next = workday;
 	}
-
 }
 
 void set_salary(Staff*& person) {
@@ -415,14 +342,35 @@ void set_salary(Staff*& person) {
 		current = current->next;
 	}
 	person->salary = user_worked_hours * 100;
-	std::cout << "The salary of the user is: " << person->salary << std::endl;
+    std::cout << "The salary of the user is: " << person->salary << std::endl;
 }
 
 
+void register_hours_menu(Staff*& staff) {
+    std::cout << "Register hours menu" << std::endl;
+    std::cout << "Type your id: ";
+    string id;
+    std::cin >> id;
+    Staff* staff_member = find_staff_by_id(id);
+    if (!staff_member) {
+        std::cout << "Staff member not found" << std::endl;
+        return;
+    }
+    registerHours(staff_member);
+}
 
-//Inventory functions
-
-
+void consult_salary(Staff*& List) {
+    std::cout << "Consult salary menu" << std::endl;
+    std::cout << "Type your id: ";
+    string id;
+    std::cin >> id;
+    Staff* staff_member = find_staff_by_id(id);
+    if (!staff_member) {
+        std::cout << "Staff member not found" << std::endl;
+        return;
+    }
+    set_salary(staff_member);
+}
 
 void stock_inquiry(Category*& selected_category) {
 	//This is a function that prints the products of a category
@@ -439,67 +387,144 @@ void stock_inquiry(Category*& selected_category) {
 	}
 }
 
+void state_inquiry(string serial_number){
+    Category* current = inventory;
+    while(current){
+        if(current->products->serial_number == serial_number){
+            break;
+        }
+        Stage* current_stage = current->products->current_stage;
+        while (current_stage->completed) {
+            current_stage = current_stage->next;
+        }
+        std::cout << "The product is in the " << current_stage->stage_name << " stage" << std::endl; //Print the current stage of the product
+    }
+}
+//------> Evaluate if this functions will stay or we will replace the template conversor <------
 
-void state_inquiry(string serial_number) {
-	//This is a function that prints the state of a product
-	//It receives the serial number of the product
-	//Returns nothing
+void append_category(Category*& category_to_append) {
+    //This is a function that appends a category to the inventory
+    //It receives a pointer to the category to append
+    //Returns nothing
 
-	Category* current = inventory; //Create a pointer to the current node
-	while (current) {
-		if (current->products->serial_number == serial_number) { //If the current node is the product, stop the search
-			break;
-			current = current->next;
-		}
+    if (!inventory) { //If the inventory is empty, the inventory is the category to append
+        inventory = category_to_append;
+        return; //Return nothing
+    }
 
-		Stage* current_stage = current->products->current_stage; //Create a pointer to the current stage of the product
-		while (current_stage->completed) { //While the current stage is completed, move to the next stage
-			current_stage = current_stage->next;
-		}
-		std::cout << "The product is in the " << current_stage->stage_name << " stage" << std::endl; //Print the current stage of the product
-	}
+    Category* current = inventory; //Create a pointer to the current node
+    while (current->next) { //While the current node is not null, move to the next node
+        current = current->next;
+    }
+    current->next = category_to_append; //The next node of the current node is the category to append
 }
 
+void append_product_to_category(Category*& category, Product*& product) {
+    //This is a function that appends a product to a category
+    //It receives a pointer to the category and a pointer to the product
+    //Returns nothing
 
-int main() {
+    if (!category->products) { //If the products of the category is empty, the products of the category is the product
+        category->products = product;
+        return; //Return nothing
+    }
 
-	//Those instance are just for testing
+    Product* current = category->products; //Create a pointer to the current node
+    while (current->next) { //While the current node is not null, move to the next node
+        current = current->next;
+    }
+    current->next = product; //The next node of the current node is the product
+}
 
+/* void append_re */
+
+//------> Evaluate if this functions will stay or we will replace the template conversor <------
+void complete_category(const string name){
+    // This function can be factored into several smaller functions 
+    Category *new_category = new Category();
+    Product *new_product = new Product();
+    Stage *new_stage = new Stage();
+    Resource *new_resource = new Resource();
+    bool completed = false;
+
+    std::cout << "Type the product you want to register: " << std::endl;
+    std::cin >> new_product->name;
+    std::cout << "Type the serial number of the product: " << std::endl;
+    std::cin >> new_product->serial_number;
+    std::cout << "Type the name of the stage: " << std::endl;
+    std::cin >> new_stage->stage_name;
+    std::cout << "Type if the stage is completed (true/false): " << std::endl;
+    std::cin >> completed;
+    std::cout << "Type the name of the resource needed to build the product" << std::endl;
+    std::cin >> new_resource->name;
+    // Add the Resource to the stage
+    double_append_end(new_stage->resources, new_resource);
+    // Add the stage to the product
+    new_product->current_stage = new_stage;
+    // Add the product to the category
+    append_product_to_category(new_category, new_product);
+    // Add the category to the inventory
+    append_category(new_category);
+
+
+}
+
+void menu(Staff*& List){
+    int option;
+    std::cout << "Welcome to the Staff menu" << std::endl;
+    std::cout << "1. Register user" << std::endl;
+    std::cout << "2. Register Category" << std::endl;
+    std::cout << "3. Register Product" << std::endl;
+    std::cout << "4. Register user worked hours" << std::endl;
+    std::cout << "5. Consult salary" << std::endl;
+    std::cout << "6. Prints" << std::endl;
+    std::cout << "10. Exit" << std::endl;
+    std::cin >> option;
+
+    switch (option) {
+        case 1:
+            add_staff();
+            break;
+        case 2:
+            break;
+        case 3:
+            break;
+        case 4:
+            register_hours_menu(List);
+            /* system("clear"); */
+            break;
+        case 5:
+            consult_salary(List);
+            break;
+        case 6:
+            print_linked_list(List);
+            /* system("clear"); */
+            break;
+        case 10:
+            exit_menu = true;
+            break;
+        default:
+            std::cout << "Invalid option" << std::endl;
+            break;
+    }
+
+}
+
+int main(){
 	Staff* first_staff = new Staff("1", "boss", "experience", "managment", "administration"); //Create the first employee, the boss
 	Staff* second_staff = new Staff("2", "employee", "experience", "production", "production"); //Create the second employee, the employee
 	Staff* third_staff = new Staff("3", "boss", "experience", "managment", "administration"); //Create the first employee, the boss
 	Staff* fourth_staff = new Staff("4", "intern", "experience", "managment", "maintenance"); //Create the first employee, the boss
 	Staff* fifth_staff = new Staff("5", "boss", "experience", "managment", "production"); //Create the first employee, the boss
-
-	double_append_end(staff_roster, first_staff); //Append the first employee to the staff roster
-	double_append_end(staff_roster, second_staff); //Append the second employee to the staff roster
-	double_append_end(staff_roster, third_staff); //Append the first employee to the staff roster
-	double_append_end(staff_roster, fourth_staff); //Append the first employee to the staff roster
-	double_append_end(staff_roster, fifth_staff); //Append the first employee to the staff roster
-
-
-	//add_staff();
-	sort_by_sector();
-	print_linked_list(staff_roster);
-	std::cout << std::endl;
-	std::cout << std::endl;
-	std::cout << std::endl;
-	std::cout << std::endl;
-	std::cout << std::endl;
-	sort_by_job_title();
-	//modify_staff("2");
-	remove_staff();
-	print_linked_list(staff_roster);
-	double_append_end(staff_roster, first_staff);
-	double_append_end(staff_roster, second_staff);
-	print_linked_list(staff_roster);
-	std::cout << "Enter the id of the person you want to register hours: ";
-	string id;
-	std::cin >> id;
-	Staff* person = findStaffById(id);
-	registerHours(person);
-	print_person_workday(person);
-	set_salary(person);
-
-	return 0;
+    double_append_end(staff_roster,first_staff);
+    double_append_end(staff_roster,second_staff);
+    double_append_end(staff_roster,third_staff);
+    double_append_end(staff_roster,fourth_staff);
+    double_append_end(staff_roster,fifth_staff);
+    while (!exit_menu) {
+        menu(staff_roster);
+    }
+    
+    return 0;
 }
+
