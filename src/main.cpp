@@ -436,9 +436,25 @@ void append_product_to_category(Category*& category, Product*& product) {
     current->next = product; //The next node of the current node is the product
 }
 
-/* void append_re */
+void append_resources(Stage*& stage, Resource*& resource) {
+    //This is a function that appends a resource to a stage
+    //It receives a pointer to the stage and a pointer to the resource
+    //Returns nothing
+
+    if (!stage->resources) { //If the resources of the stage is empty, the resources of the stage is the resource
+        stage->resources = resource;
+        return; //Return nothing
+    }
+
+    Resource* current = stage->resources; //Create a pointer to the current node
+    while (current->next) { //While the current node is not null, move to the next node
+        current = current->next;
+    }
+    current->next = resource; //The next node of the current node is the resource
+}
 
 //------> Evaluate if this functions will stay or we will replace the template conversor <------
+
 void complete_category(const string name){
     // This function can be factored into several smaller functions 
     Category *new_category = new Category();
@@ -454,26 +470,27 @@ void complete_category(const string name){
     std::cout << "Type the name of the stage: " << std::endl;
     std::cin >> new_stage->stage_name;
     std::cout << "Type if the stage is completed (true/false): " << std::endl;
-    std::cin >> completed;
+    std::cin >> std::boolalpha >> completed;
+    std::cin.ignore();
     std::cout << "Type the name of the resource needed to build the product" << std::endl;
     std::cin >> new_resource->name;
     // Add the Resource to the stage
-    double_append_end(new_stage->resources, new_resource);
+    append_resources(new_stage, new_resource);
     // Add the stage to the product
     new_product->current_stage = new_stage;
     // Add the product to the category
     append_product_to_category(new_category, new_product);
     // Add the category to the inventory
     append_category(new_category);
-
-
+    return;
 }
 
-void menu(Staff*& List){
+void menu(Staff*& list){
     int option;
+    string answer;
     std::cout << "Welcome to the Staff menu" << std::endl;
     std::cout << "1. Register user" << std::endl;
-    std::cout << "2. Register Category" << std::endl;
+    std::cout << "2. Register Category and Product" << std::endl;
     std::cout << "3. Register Product" << std::endl;
     std::cout << "4. Register user worked hours" << std::endl;
     std::cout << "5. Consult salary" << std::endl;
@@ -486,18 +503,24 @@ void menu(Staff*& List){
             add_staff();
             break;
         case 2:
+            std::cout << "Type the name of the category: " << std::endl;
+            std::cin >> answer;
+            complete_category(answer);
             break;
         case 3:
             break;
         case 4:
-            register_hours_menu(List);
+            register_hours_menu(list);
             /* system("clear"); */
             break;
         case 5:
-            consult_salary(List);
+            consult_salary(list);
             break;
         case 6:
-            print_linked_list(List);
+            std::cout << "Staff Members" << std::endl;
+            print_linked_list(list);
+            std::cout << "Inventory" << std::endl;
+            print_linked_list(inventory);
             /* system("clear"); */
             break;
         case 10:
