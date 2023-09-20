@@ -102,7 +102,7 @@ void double_circular_append_end(T*& linked_list, T*& element_to_append) {
 
 template <typename T>
 void print_linked_list(T*& linked_list) {
-	//This is a function that prints the elements of a linked list
+	//This is a function that prints the elements of a non-circular linked list
 	//It receives a pointer to the linked list
 	//Returns nothing
 
@@ -112,6 +112,20 @@ void print_linked_list(T*& linked_list) {
         std::cout << current << std::endl;
         current = current->next;
     }
+}
+
+template <typename T>
+void print_circular_linked_list(T*& linked_list) {
+	//This is a function that prints the elements of a circular linked list
+	//It receives a pointer to the linked list
+	//Returns nothing
+
+	T* current = linked_list; //Create a pointer to the current node
+	while (current->next != linked_list) { //While the next node of the current node is not the first node, print the data of the current node and move to the next node
+		std::cout << current << std::endl;
+		current = current->next;
+	}
+	std::cout << current << std::endl; //Print the data of the last node
 }
 
 void assign_boss(string new_staff_id) {
