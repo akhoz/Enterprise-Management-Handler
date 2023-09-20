@@ -558,10 +558,7 @@ Product* find_product_by_serial_number(const string& serial_number, string categ
     return nullptr;
 }
 
-bool check_progress(string category_name){
-    std::cout << "Type the serial number of the product you want to check: " << std::endl;
-    string serial_number;
-    std::cin >> serial_number;
+bool check_progress(string category_name, string serial_number){
     Stage* current_stage = find_product_by_serial_number(serial_number, category_name)->current_stage;
     while(current_stage){
         Resource* current_resource = current_stage->resources;
@@ -583,8 +580,13 @@ bool check_progress(string category_name){
     return true;
 }
 
-void advance_stage(string category_name) {
-    if(!check_progress(category_name)){
+void advance_stage() {
+    std::cout << "Type the name of the category: " << std::endl;
+    string category_name;
+    std::cout << "Type the serial number of the product: " << std::endl;
+    string serial_number;
+    std::cin >> category_name;
+    if(!check_progress(category_name, serial_number)){
         std::cout << "The product is not ready for the next stage" << std::endl;
         return;
     }
@@ -616,9 +618,7 @@ void menu(Staff*& list){
             complete_category(answer);
             break;
         case 3:
-            std::cout << "Type the name of the category: " << std::endl;
-            std::cin >> answer;
-            advance_stage(answer);
+            advance_stage();
 
             break;
         case 4:
@@ -741,6 +741,10 @@ int main(){
     double_circular_append_end(warehouse_inventory, shield);
     double_circular_append_end(warehouse_inventory, wheat);
     double_circular_append_end(warehouse_inventory, stick);
+
+    Category *first_category = new Category("Smurf Cat");
+    first_category->products = new Product("Default", "1");
+
 
     while (!exit_menu) {
         menu(staff_roster);
