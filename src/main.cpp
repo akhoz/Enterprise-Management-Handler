@@ -583,10 +583,13 @@ bool check_progress(string category_name){
     return true;
 }
 
-void advance_stage() {
+void advance_stage(string category_name) {
+    if(!check_progress(category_name)){
+        std::cout << "The product is not ready for the next stage" << std::endl;
+        return;
+    }
     
 }
-
 
 
 
@@ -596,7 +599,7 @@ void menu(Staff*& list){
     std::cout << "Welcome to the Staff menu" << std::endl;
     std::cout << "1. Register user" << std::endl;
     std::cout << "2. Register Category and Product" << std::endl;
-    std::cout << "3. Pending!" << std::endl;
+    std::cout << "3. Consult category status" << std::endl;
     std::cout << "4. Register user worked hours" << std::endl;
     std::cout << "5. Consult salary" << std::endl;
     std::cout << "6. Prints" << std::endl;
@@ -613,6 +616,10 @@ void menu(Staff*& list){
             complete_category(answer);
             break;
         case 3:
+            std::cout << "Type the name of the category: " << std::endl;
+            std::cin >> answer;
+            advance_stage(answer);
+
             break;
         case 4:
             register_hours_menu(list);
