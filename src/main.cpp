@@ -4,6 +4,7 @@
 #include <Staff.hh>
 #include <Stage.hh>
 #include <Workday.hh>
+#include <Warehouse.hh>
 
 #include <cstdlib>
 #include <ctime>
@@ -19,6 +20,9 @@ Staff *staff_roster = nullptr;
 
 // Create a pointer to the inventory linked list, set it to null
 Category *inventory = nullptr;
+
+
+Warehouse *warehouse_inventory = nullptr;
 
 bool exit_menu = false;
 
@@ -86,14 +90,15 @@ void double_circular_append_end(T*& linked_list, T*& element_to_append) {
 	T* current = linked_list;
 
     //While the next element of the current element is not the first element of the linked list
-	while (current->next != linked_list) { 
+	do { 
        		current = current->next;
-	}
+	}  while (current->next != linked_list);
 	current->next = element_to_append; //The next element of the current element is the element to append
 	element_to_append->prev = current; //The previous element of the element to append is the current element
 	element_to_append->next = linked_list; //The next element of the element to append is the first element of the linked list
 	linked_list->prev = element_to_append; //The previous element of the first element of the linked list is the element to append
 }
+
 
 template <typename T>
 void print_linked_list(T*& linked_list) {
@@ -519,8 +524,8 @@ void menu(Staff*& list){
         case 6:
             std::cout << "Staff Members" << std::endl;
             print_linked_list(list);
-            std::cout << "Inventory" << std::endl;
-            print_linked_list(inventory);
+            std::cout << "Warehouse" << std::endl;
+            print_linked_list(warehouse_inventory);
             /* system("clear"); */
             break;
         case 10:
@@ -531,6 +536,33 @@ void menu(Staff*& list){
             break;
     }
 
+}
+
+void add_stock(string name) {
+    int amount{};
+    Warehouse* current = warehouse_inventory;
+    while (current) {
+        if (current->name == name) {
+            break;
+        }
+        current = current->next;
+    }
+    std::cout << "Type the amount of stock you want to add: " << std::endl;
+    std::cin >> amount;
+    current->quantity += amount;
+    std::cout << "Stock added successfully" << std::endl;
+}
+
+void append_stock() {
+    string name;
+    int amount{};
+    std::cout << "Type the name of the product you want to add stock: " << std::endl;
+    std::cin >> name;
+    std::cout << "Type the amount of stock you want to add: " << std::endl;
+    std::cin >> amount;
+    Warehouse* new_stock = new Warehouse(name, amount);
+
+    double_circular_append_end(warehouse_inventory, new_stock);
 }
 
 int main(){
@@ -544,9 +576,67 @@ int main(){
     double_append_end(staff_roster,third_staff);
     double_append_end(staff_roster,fourth_staff);
     double_append_end(staff_roster,fifth_staff);
+
+    Warehouse *plastic = new Warehouse("Plastic", 50);
+    Warehouse *metal = new Warehouse("Cloth", 30);
+    Warehouse *wood = new Warehouse("Wood", 20);
+    Warehouse *blue_paint = new Warehouse("Blue paint", 25);
+    Warehouse *white_paint = new Warehouse("White paint", 25);
+    Warehouse *gold_paint = new Warehouse("Gold paint", 25);
+    Warehouse *purple_paint = new Warehouse("Purple paint", 25);
+    Warehouse *red_paint = new Warehouse("Red paint", 25);
+    Warehouse *green_paint = new Warehouse("Green paint", 25);
+    Warehouse *black_paint = new Warehouse("Black", 25);
+    Warehouse *brown_paint = new Warehouse("Brown paint", 25);
+    Warehouse *brown_mushroom = new Warehouse("Brown mushroom", 10);
+    Warehouse *box = new Warehouse("Box", 70);
+    Warehouse *sticker = new Warehouse("Sticker", 35);
+    Warehouse *bubble_wrap = new Warehouse("Bubble wrap", 40);
+    Warehouse *platinum_mushroom = new Warehouse("Platinum mushroom", 10);
+    Warehouse *silver_box = new Warehouse("Silver box", 5);
+    Warehouse *strawberry = new Warehouse("Strawberry", 30);
+    Warehouse *leather = new Warehouse("Leather", 20);
+    Warehouse *horn = new Warehouse("Horn", 15);
+    Warehouse *leaf = new Warehouse("Leaf", 10);
+    Warehouse *steel = new Warehouse("Steel", 20);
+    Warehouse *lightsaber = new Warehouse("Lightsaber", 10);
+    Warehouse *sword = new Warehouse("Sword", 10);
+    Warehouse *shield = new Warehouse("Shield", 10);
+    Warehouse *wheat = new Warehouse("Wheat", 40);
+    Warehouse *stick = new Warehouse("Stick", 60);
+
+    double_circular_append_end(warehouse_inventory, plastic);
+    double_circular_append_end(warehouse_inventory, metal);
+    double_circular_append_end(warehouse_inventory, wood);
+    double_circular_append_end(warehouse_inventory, blue_paint);
+    double_circular_append_end(warehouse_inventory, white_paint);
+    double_circular_append_end(warehouse_inventory, gold_paint);
+    double_circular_append_end(warehouse_inventory, purple_paint);
+    double_circular_append_end(warehouse_inventory, red_paint);
+    double_circular_append_end(warehouse_inventory, green_paint);
+    double_circular_append_end(warehouse_inventory, black_paint);
+    double_circular_append_end(warehouse_inventory, brown_paint);
+    double_circular_append_end(warehouse_inventory, brown_mushroom);
+    double_circular_append_end(warehouse_inventory, box);
+    double_circular_append_end(warehouse_inventory, sticker);
+    double_circular_append_end(warehouse_inventory, bubble_wrap);
+    double_circular_append_end(warehouse_inventory, platinum_mushroom);
+    double_circular_append_end(warehouse_inventory, silver_box);
+    double_circular_append_end(warehouse_inventory, strawberry);
+    double_circular_append_end(warehouse_inventory, leather);
+    double_circular_append_end(warehouse_inventory, horn);
+    double_circular_append_end(warehouse_inventory, leaf);
+    double_circular_append_end(warehouse_inventory, steel);
+    double_circular_append_end(warehouse_inventory, lightsaber);
+    double_circular_append_end(warehouse_inventory, sword);
+    double_circular_append_end(warehouse_inventory, shield);
+    double_circular_append_end(warehouse_inventory, wheat);
+    double_circular_append_end(warehouse_inventory, stick);
+
     while (!exit_menu) {
         menu(staff_roster);
     }
+
     
     return 0;
 }
