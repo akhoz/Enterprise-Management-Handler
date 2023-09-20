@@ -11,6 +11,12 @@ public:
     
     Category(string category_name, Product* products, Category* next); //Constructor
     Category(); //Constructor
+
+	friend std::ostream& operator<<(std::ostream& os, const Category& category) {
+		os << "Category: " << category.category_name << std::endl;
+		os << "Products: " << std::endl;
+	}; //Overload of the << operator
+
     
 };
 

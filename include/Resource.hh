@@ -11,4 +11,9 @@ public:
     
     Resource(string resource_name, int quantity, Resource* next); //Constructor
     Resource(); //Constructor
+
+    friend std::ostream& operator<<(std::ostream& os, const Resource& resource) {
+        os << "Resource: " << resource.name << std::endl;
+        os << "Quantity: " << resource.quantity << std::endl;
+    }; //Overload of the << operator
 };

@@ -17,12 +17,21 @@ public:
     Workday(string start_time, string end_time, int worked_hours, bool is_holiday, bool is_weekend, Workday* next); //Constructor
     Workday(); //Constructor
 
-	    void print(){
-        std::cout << "Start Time: " << start_time << std::endl;
-        std::cout << "End Time: " << end_time << std::endl;
-        std::cout << "Worked Hours: " << worked_hours << std::endl;
-        std::cout << "Is Holiday: " << is_holiday << std::endl;
-        std::cout << "Is Weekend: " << is_weekend << std::endl;
-        std::cout << "\n";
-    }
+    friend std::ostream& operator<<(std::ostream& os, const Workday& workday) {
+        os << "Start time: " << workday.start_time << std::endl;
+        os << "End time: " << workday.end_time << std::endl;
+        os << "Worked hours: " << workday.worked_hours << std::endl;
+        os << "Is holiday: " << workday.is_holiday;
+        if (workday.is_holiday) {
+            os << "yes" << std::endl;
+        } else {
+            os << "no" << std::endl;
+        }
+        os << "Is weekend: " << workday.is_weekend;
+        if (workday.is_weekend) {
+            os << "yes" << std::endl;
+        } else {
+            os << "no" << std::endl;
+        }
+    }; //Overload of the << operator
 };
