@@ -569,12 +569,7 @@ bool check_progress(string category_name){
         while(current_resource){
             while(current_warehouse){
                 if(current_resource->name == current_warehouse->name){
-                    if(current_resource->quantity <= current_warehouse->quantity){
-                        current_resource->next;
-                        break;
-                    }
-                    else{
-                        std::cout << "The product is missing resources" << std::endl;
+                    if(!(current_resource->quantity <= current_warehouse->quantity)){
                         return false;
                     }
                 }
@@ -583,7 +578,7 @@ bool check_progress(string category_name){
             current_resource = current_resource->next;
         }
         current_stage = current_stage->next;
-        }
+    }
     std::cout << "The product is ready for the next stage" << std::endl;
     return true;
 }
