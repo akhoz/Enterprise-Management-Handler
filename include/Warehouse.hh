@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-
+#include <iostream>
 
 using std::string;
 
@@ -18,5 +18,6 @@ class Warehouse{
         friend std::ostream& operator<<(std::ostream& os, const Warehouse& warehouse) {
             os << "Warehouse: " << warehouse.name << std::endl;
             os << "Quantity: " << warehouse.quantity << std::endl;
+            return os;
         }; //Overload of the << operator
 };

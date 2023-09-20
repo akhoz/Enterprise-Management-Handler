@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <iostream>
 #include <Product.hh>
 
 
@@ -15,7 +16,9 @@ public:
 	friend std::ostream& operator<<(std::ostream& os, const Category& category) {
 		os << "Category: " << category.category_name << std::endl;
 		os << "Products: " << std::endl;
+        return os;
 	}; //Overload of the << operator
+    
 
     
 };

@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <iostream>
 #include <Stage.hh>
 
 using std::string;
@@ -23,6 +24,7 @@ public:
         } else {
             os << "Current stage state: in process" << std::endl;
         }
+        return os;
     }; //Overload of the << operator
 };
 

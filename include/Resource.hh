@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <iostream>
 
 using std::string;
 
@@ -15,5 +16,6 @@ public:
     friend std::ostream& operator<<(std::ostream& os, const Resource& resource) {
         os << "Resource: " << resource.name << std::endl;
         os << "Quantity: " << resource.quantity << std::endl;
+        return os;
     }; //Overload of the << operator
 };

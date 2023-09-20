@@ -33,5 +33,6 @@ public:
         } else {
             os << "no" << std::endl;
         }
+        return os;
     }; //Overload of the << operator
 };
