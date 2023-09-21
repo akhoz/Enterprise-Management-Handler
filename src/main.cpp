@@ -580,6 +580,33 @@ bool check_progress(string category_name, string serial_number){
     return true;
 }
 
+void reduce_warehouse(string category_name, string serial_number) {
+    Product* product = find_product_by_serial_number(serial_number, category_name);
+    Stage* current_stage = product->current_stage;
+
+    while (current_stage->completed) {
+        current_stage = current_stage->next;
+    }
+
+    Resource* current_resource = current_stage->resources;
+    Warehouse* current_warehouse = warehouse_inventory;
+
+    while (current_resource) {
+        while (current_warehouse) {
+            if (current_resource->name == current_warehouse->name) {
+                current_warehouse->quantity -= current_resource->quantity;
+            }
+            current_warehouse = current_warehouse->next;
+        }
+        current_resource = current_resource->next;
+    }
+
+}
+
+void reduceResources(){
+    std::cout << "Reducing resources" << std::endl;
+}
+
 void advance_stage() {
     std::cout << "Type the name of the category: " << std::endl;
     string category_name;
@@ -589,6 +616,19 @@ void advance_stage() {
     if(!check_progress(category_name, serial_number)){
         std::cout << "The product is not ready for the next stage" << std::endl;
         return;
+    }
+    else{
+        std::cout << "The product is ready for the next stage" << std::endl;
+        std::cout << "Do you want to advance the stage? (true/false)" << std::endl;
+        bool answer;
+        std::cin >> std::boolalpha >> answer;
+        if(!answer){
+            return;
+        }
+        else{
+            std::cout << "Reducing resources" << std::endl;
+        reduce_warehouse(category_name, serial_number);
+        }
     }
     
 }
@@ -744,13 +784,14 @@ int main(){
 
     Category *first_category = new Category("Smurf Cat");
     first_category->products = new Product("Default", "1");
+    first_category->products->current_stage = new Stage("Initial", false);
+    Resource *first_resource = new Resource("blue_paint", 1);
+    Resource *second_resource = new Resource("Blue paint", 1);
 
 
     while (!exit_menu) {
         menu(staff_roster);
     }
-
-    
     return 0;
 }
 
