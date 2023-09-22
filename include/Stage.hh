@@ -10,7 +10,7 @@ public:
 	Resource* resources; //Resources used in the stage
 	Stage* next; //Next stage in the list
     
-    Stage(string stage_name, bool completed, Resource* resources, Stage* next); //Constructor
+    Stage(string stage_name, bool completed); //Constructor
     Stage(); //Constructor
 };
 

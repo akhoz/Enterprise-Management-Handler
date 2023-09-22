@@ -1,11 +1,9 @@
 #include <Stage.hh>
 
-Stage::Stage(string stage_name, bool completed, Resource* resources, Stage* next) {
+Stage::Stage(string stage_name, bool completed) {
     //This is a constructor of the Stage struct, it creates an object with the given parameters, returns nothing
     this->stage_name = stage_name;
     this->completed = completed;
-    this->resources = resources;
-    this->next = next;
 }
 
 Stage::Stage() {

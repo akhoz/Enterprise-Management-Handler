@@ -6,10 +6,8 @@ Category::Category() {
     this->products = nullptr;
     this->next = nullptr;
 }
-Category::Category(string category_name, Product* products, Category* next) {
+Category::Category(string category_name) {
     //This is a constructor of the Inventory struct, it creates an object with the given parameters, returns nothing
     this->category_name = category_name;
-    this->products = products;
-    this->next = next;
 }
 

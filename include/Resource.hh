@@ -10,7 +10,7 @@ public:
     int quantity; //Quantity of the resource
 	Resource* next; //Next resource in the list
     
-    Resource(string resource_name, int quantity, Resource* next); //Constructor
+    Resource(string resource_name, int quantity); //Constructor
     Resource(); //Constructor
 
     friend std::ostream& operator<<(std::ostream& os, const Resource& resource) {

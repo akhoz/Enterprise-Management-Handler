@@ -12,7 +12,7 @@ public:
 	Stage* current_stage; //Current stage of the product
 	Product* next; //Next product in the list	
 
-    Product(string name, string serial_number, Stage* current_stage, Product* next);
+    Product(string name, string serial_number);
     Product();
 
     friend std::ostream& operator<<(std::ostream& os, const Product& product) {
