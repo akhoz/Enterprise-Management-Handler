@@ -160,13 +160,14 @@ void print_whole_categories() {
                 std::cout << current_resource->name << std::endl;
                 current_resource = current_resource->next;
             }
-            std::cout << "Sale del current->resources\n";
             current_stage = current_stage->next;
         }
+        std::cout << std::endl;
         current_product = current_product->next;
     }
     current = current->next;
     }
+    std::cout << "\n";
 }
 
 void assign_boss(string new_staff_id) {
@@ -176,7 +177,7 @@ void assign_boss(string new_staff_id) {
 
 	string boss_id;
 	std::cout << "Boss id: ";
-	std::cin >> boss_id;
+    std::getline(std::cin, boss_id);
 
 	if (boss_id.empty()) //If the boss id is not empty, exit the function
 		return;
@@ -209,17 +210,17 @@ void add_staff() {
 	//Here is where the information is requested
 	Staff* new_staff = new Staff(); //Create a pointer to the new employee
 	std::cout << "Please fill the following information: " << std::endl;
+    std::cin.ignore();
 	std::cout << "Id: ";
-	std::cin >> new_staff->id;
+    std::getline(std::cin, new_staff->id);
 	std::cout << "Job title: ";
-	std::cin >> new_staff->job_title;
+    std::getline(std::cin, new_staff->job_title);
 	std::cout << "Salary bonuses: ";
-	std::cin >> new_staff->salary_bonuses;
+    std::getline(std::cin, new_staff->salary_bonuses);
 	std::cout << "Job performed: ";
-	std::cin >> new_staff->job_performed;
+    std::getline(std::cin, new_staff->job_performed);
 	std::cout << "Employment sector: ";
-	std::cin >> new_staff->employment_sector;
-
+    std::getline(std::cin,new_staff->employment_sector);
 	double_append_end(staff_roster, new_staff); //Append the new employee to the staff roster
 
 	if (new_staff->job_title != "boss") //If the employee is not the boss, assign a boss to the employee
@@ -234,8 +235,9 @@ void remove_staff() {
 	//Returns nothing
 
 	string staff_id;
+    std::cin.ignore();
 	std::cout << "Type the id of the employee you want to remove: ";
-	std::cin >> staff_id;
+    std::getline(std::cin, staff_id);
 
 	Staff* current = staff_roster; //Create a pointer to the current node
 	while (current) { //While the current node is not null, search for the employee
@@ -256,14 +258,15 @@ void remove_staff() {
 		current = current->next;
 	}
 }
+
 void modify_staff(string staff_id) {
 	//This function modifies the information of an employee
 	//Recieves the id of the employee
 	//Returns nothing
-
 	string property_to_change;
 	std::cout << "Type the property you want to change: ";
-	std::cin >> property_to_change;
+    std::cin >> property_to_change;
+    std::cin.ignore();
 
 	Staff* current = staff_roster; //Create a pointer to the current node
 	Staff* staff_to_modify = nullptr; //Create a pointer to the employee to modify, set it to null
@@ -280,27 +283,26 @@ void modify_staff(string staff_id) {
 		std::cout << "No employee found with that id" << std::endl;
 		return;
 	}
-
 	//Case comparison, this is to determine which property of the employee to change
 	if (property_to_change == "id") { //If the property to change is the id, change the id of the employee
 		std::cout << "New id: ";
-		std::cin >> staff_to_modify->id;
+        std::getline(std::cin, staff_to_modify->id);
 	}
 	else if (property_to_change == "job_title") { //If the property to change is the job title, change the job title of the employee
 		std::cout << "New job title: ";
-		std::cin >> staff_to_modify->job_title;
+        std::getline(std::cin, staff_to_modify->job_title);
 	}
 	else if (property_to_change == "salary_bonuses") { //If the property to change is the salary bonuses, change the salary bonuses of the employee
 		std::cout << "New salary bonuses: ";
-		std::cin >> staff_to_modify->salary_bonuses;
+        std::getline(std::cin, staff_to_modify->salary_bonuses);
 	}
 	else if (property_to_change == "job_performed") { //If the property to change is the job performed, change the job performed of the employee
 		std::cout << "New job performed: ";
-		std::cin >> staff_to_modify->job_performed;
+        std::getline(std::cin, staff_to_modify->job_performed);
 	}
 	else if (property_to_change == "employment_sector") { //If the property to change is the employment sector, change the employment sector of the employee
 		std::cout << "New employment sector: ";
-		std::cin >> staff_to_modify->employment_sector;
+        std::getline(std::cin, staff_to_modify->employment_sector);
 	}
 	else if (property_to_change == "boss") { //If the property to change is the boss, change the boss of the employee
 		assign_boss(staff_to_modify->id);
@@ -331,7 +333,6 @@ void print_workday(Staff*& staff) {
     }
 }
 
-
 int worked_hours(const string& start, const string& end) {
 	tm parsed_start = parse_hour(start);
 	tm parsed_end = parse_hour(end);
@@ -351,13 +352,13 @@ void registerHours(Staff*& staff) {
 	string holiday;
 
 	std::cout << "Enter the start hour: \n";
-	std::cin >> workday->start_time;
+    std::getline(std::cin, workday->start_time);
 	std::cout << "Enter the end hour: \n";
-	std::cin >> workday->end_time;
+    std::getline(std::cin, workday->end_time);
 	std::cout << "Is it a weekend? (y/n): \n";
-	std::cin >> weeknd;
+    std::getline(std::cin, weeknd);
 	std::cout << "Is it a holiday? (y/n): \n";
-	std::cin >> holiday;
+    std::getline(std::cin, holiday);
 	if (weeknd == "y") {
 		workday->is_weekend = true;
 	}
@@ -385,41 +386,42 @@ void registerHours(Staff*& staff) {
 }
 
 void set_salary(Staff*& person) {
-    // Ask the user how many days he want to print
-	int user_worked_hours = 0;
-    int days = 0;
-    int count = 0;
-	Workday* current = person->workdays;
-	if (current == nullptr) {
-		std::cout << "The user has not worked yet" << std::endl;
-		return;
-	}
-    std::cout << "How many days do you want to print? " << std::endl;
-    std::cin >> days;
-
-	while (current && count < days) {
-		if (current->is_weekend == true) {
-			user_worked_hours += current->worked_hours * 2;
-		}
-		else if (current->is_holiday == true) {
-			user_worked_hours += current->worked_hours * 3;
-		}
-		else {
-			user_worked_hours += current->worked_hours;
-		}
-		current = current->next;
-        count++;
-	}
-	person->salary = user_worked_hours * 100; // Change
+    int user_worked_hours = 0;
+    int user_salary = 0;
+    Workday* current = person->workdays;
+    if (current == nullptr) {
+        std::cout << "The user has not worked yet" << std::endl;
+        return;
+    }
+    while (current) {
+        if (current->is_weekend == true) {
+            user_worked_hours += current->worked_hours * 2;
+        }
+        else if (current->is_holiday == true) {
+            user_worked_hours += current->worked_hours * 3;
+        }
+        else {
+            user_worked_hours += current->worked_hours;
+        }
+        current = current->next;
+    }
+    user_salary = user_worked_hours * 100;
+    if (person->salary_bonuses == "experienced") {
+        user_salary += 1000;
+    }
+    else if (person->salary_bonuses == "performance") {
+        user_salary += 500;
+    }
+    person->salary = user_salary;
     std::cout << "The salary of the user is: " << person->salary << std::endl;
 }
 
-
 void register_hours_menu(Staff*& staff) {
+    string id;
+    std::cin.ignore();
     std::cout << "Register hours menu" << std::endl;
     std::cout << "Type your id: ";
-    string id;
-    std::cin >> id;
+    std::getline(std::cin, id);
     Staff* staff_member = find_staff_by_id(id);
     if (!staff_member) {
         std::cout << "Staff member not found" << std::endl;
@@ -429,10 +431,11 @@ void register_hours_menu(Staff*& staff) {
 }
 
 void consult_salary(Staff*& List) {
+    string id;
+    std::cin.ignore();
     std::cout << "Consult salary menu" << std::endl;
     std::cout << "Type your id: ";
-    string id;
-    std::cin >> id;
+    std::getline(std::cin, id);
     Staff* staff_member = find_staff_by_id(id);
     if (!staff_member) {
         std::cout << "Staff member not found" << std::endl;
@@ -548,40 +551,44 @@ void complete_category(const string name){
     Stage *stage_list = nullptr;
     Resource *component_list = nullptr;
     bool completed = false;
-    std::cout << "How manu products you want to register? " << std::endl;
+    std::cout << "How many products you want to register? " << std::endl;
     int products;
     std::cin >> products;
+    std::cin.ignore();
     for (int i = 0; i < products; i++) {
         new_product = new Product();
         std::cout << "Type the product you want to register: " << std::endl;
-        std::cin >> new_product->name;
+        std::getline(std::cin, new_product->name);
         std::cout << "Type the serial number of the product: " << std::endl;
-        std::cin >> new_product->serial_number;
+        std::getline(std::cin, new_product->serial_number);
         std::cout << "How many stages does the product has? " << std::endl;
         int stages;
         std::cin >> stages;
+        std::cin.ignore();
         for (int j =0; j < stages; j++){
             Stage *new_stage = new Stage();
             std::cout << "Type the name of the stage: " << std::endl;
-            std::cin >> new_stage->stage_name;
+            std::getline(std::cin, new_stage->stage_name);
             std::cout << "Type if the stage is completed (true/false): " << std::endl;
             std::cin >> std::boolalpha >> completed;
             std::cin.ignore();
             std::cout << "How many resources does the stage have? " << std::endl;
             int amount;
             std::cin >> amount;
-            for (int i = 0; i < amount; i++) {
+            std::cin.ignore();
+            for (int y = 0; y < amount; y++) {
                 Resource *new_resource = new Resource();
                 std::cout << "Type the name of the resource needed to build the product" << std::endl;
-                std::cin >> new_resource->name;
+                std::getline(std::cin, new_resource->name);
                 std::cout << "Type the quantity of the resource needed to build the product" << std::endl;
                 std::cin >> new_resource->quantity;
+                std::cin.ignore();
                 // Add the Resource to the components list
                 lineal_append_end(component_list, new_resource);
             }
             lineal_append_end(new_stage->resources, component_list);
-            component_list = nullptr;
             lineal_append_end(stage_list, new_stage);
+            component_list = nullptr;
         }
         lineal_append_end(new_product->current_stage, stage_list);
         stage_list = nullptr;
@@ -589,6 +596,106 @@ void complete_category(const string name){
     }
     lineal_append_end(inventory, new_category);
     return;
+}
+
+void append_product(string category) {
+    Category* current = inventory; //Create a pointer to the current node
+    while (current) {
+        if (current->category_name == category) { //If the current node is the selected category, append the product to the category
+            Product* new_product = new Product();
+            std::cin.ignore();
+            std::cout << "Type the name of the product: " << std::endl;
+            std::getline(std::cin, new_product->name);
+            std::cout << "Type the serial number of the product: " << std::endl;
+            std::getline(std::cin, new_product->serial_number);
+            std::cout << "How many stages does the product has? " << std::endl;
+            int stages;
+            std::cin >> stages;
+            std::cin.ignore();
+            for (int i = 0; i < stages; i++) {
+                Stage* new_stage = new Stage();
+                std::cout << "Type the name of the stage: " << std::endl;
+                std::getline(std::cin, new_stage->stage_name);
+                std::cout << "Type if the stage is completed (true/false): " << std::endl;
+                std::cin >> std::boolalpha >> new_stage->completed;
+                std::cin.ignore();
+                std::cout << "How many resources does the stage have? " << std::endl;
+                int amount;
+                std::cin >> amount;
+                std::cin.ignore();
+                for (int i = 0; i < amount; i++) {
+                    Resource* new_resource = new Resource();
+                    std::cout << "Type the name of the resource needed to build the product" << std::endl;
+                    std::getline(std::cin, new_resource->name);
+                    std::cout << "Type the quantity of the resource needed to build the product" << std::endl;
+                    std::cin >> new_resource->quantity;
+                    std::cin.ignore();
+                    // Add the Resource to the components list
+                    lineal_append_end(new_stage->resources, new_resource);
+                }
+                lineal_append_end(new_product->current_stage, new_stage);
+            }
+            lineal_append_end(current->products, new_product);
+            return; //Return nothing
+        }
+    }
+}
+
+void append_resource(string product, string stage) {
+    Product* current_product = inventory->products; //Create a pointer to the current node
+    while (current_product) {
+        if (current_product->serial_number == product) { //If the current node is the selected product, append the resource to the product
+            Stage* current_stage = current_product->current_stage;
+            while (current_stage) {
+                if (current_stage->stage_name == stage) { //If the current node is the selected stage, append the resource to the stage
+                    Resource* new_resource = new Resource();
+                    std::cout << "Type the name of the resource needed to build the product" << std::endl;
+                    std::getline(std::cin, new_resource->name);
+                    std::cout << "Type the quantity of the resource needed to build the product" << std::endl;
+                    std::cin >> new_resource->quantity;
+                    std::cin.ignore();
+                    // Add the Resource to the components list
+                    lineal_append_end(current_stage->resources, new_resource);
+                    return; //Return nothing
+                }
+                current_stage = current_stage->next;
+            }
+        }
+        current_product = current_product->next;
+    }
+}
+
+
+void append_stage(string product) {
+    Product* current_product = inventory->products; //Create a pointer to the current node
+    while (current_product) {
+        if (current_product->name == product) { //If the current node is the selected product, append the stage to the product
+            std::cin.ignore();
+            Stage* new_stage = new Stage();
+            std::cout << "Type the name of the stage: " << std::endl;
+            std::getline(std::cin, new_stage->stage_name);
+            std::cout << "Type if the stage is completed (true/false): " << std::endl;
+            std::cin >> std::boolalpha >> new_stage->completed;
+            std::cin.ignore();
+            std::cout << "How many resources does the stage have? " << std::endl;
+            int amount;
+            std::cin >> amount;
+            std::cin.ignore();
+            for (int i = 0; i < amount; i++) {
+                Resource* new_resource = new Resource();
+                std::cout << "Type the name of the resource needed to build the product" << std::endl;
+                std::getline(std::cin, new_resource->name);
+                std::cout << "Type the quantity of the resource needed to build the product" << std::endl;
+                std::cin >> new_resource->quantity;
+                std::cin.ignore();
+                // Add the Resource to the components list
+                lineal_append_end(new_stage->resources, new_resource);
+            }
+            lineal_append_end(current_product->current_stage, new_stage);
+            return; //Return nothing
+        }
+        current_product = current_product->next;
+    }
 }
 
 Category* find_category(const string& category_name) {
@@ -603,10 +710,16 @@ Category* find_category(const string& category_name) {
 }
 
 Product* find_product_by_serial_number(const string& serial_number, string category_name) {
-    Category *current = find_category(category_name);
+    Category* current = inventory;
+    while (current) {
+        if (current->category_name == category_name)
+            break;
+        current = current->next;
+    }
     if (!current) {
         return nullptr;
     }
+    std::cout << current->category_name << std::endl;
     Product* current_product = current->products;
     while (current_product) {
         if (current_product->serial_number == serial_number) {
@@ -621,9 +734,10 @@ bool check_progress(string category_name, string serial_number){
     Stage* current_stage = find_product_by_serial_number(serial_number, category_name)->current_stage;
     while(current_stage){
         Resource* current_resource = current_stage->resources;
+        Warehouse* temp = warehouse_inventory;
         Warehouse* current_warehouse = warehouse_inventory;
         while(current_resource){
-            while(current_warehouse){
+            while(current_warehouse != temp){
                 if(current_resource->name == current_warehouse->name){
                     if(!(current_resource->quantity <= current_warehouse->quantity)){
                         return false;
@@ -635,28 +749,34 @@ bool check_progress(string category_name, string serial_number){
         }
         current_stage = current_stage->next;
     }
-    std::cout << "The product is ready for the next stage" << std::endl;
     return true;
 }
 
 void reduce_warehouse(string category_name, string serial_number) {
     Product* product = find_product_by_serial_number(serial_number, category_name);
     Stage* current_stage = product->current_stage;
-
-    while (current_stage->completed) {
-        current_stage = current_stage->next;
+    if (current_stage->completed) {
+        while (current_stage->completed) {
+            if (current_stage->next == nullptr) {
+                std::cout << "The product is already completed" << std::endl;
+                return;
+            }
+            current_stage = current_stage->next;
+        }
     }
-
     Resource* current_resource = current_stage->resources;
-    Warehouse* current_warehouse = warehouse_inventory;
+    /* Warehouse* temp = warehouse_inventory; */
 
     while (current_resource) {
-        while (current_warehouse) {
-            if (current_resource->name == current_warehouse->name) {
+        Warehouse* current_warehouse = warehouse_inventory;
+        do{
+            if(current_resource->name == current_warehouse->name){
                 current_warehouse->quantity -= current_resource->quantity;
+                std::cout << "Reducing " << current_resource->name << " by " << current_resource->quantity << std::endl;
             }
             current_warehouse = current_warehouse->next;
-        }
+        }while(current_warehouse != warehouse_inventory);
+        
         current_resource = current_resource->next;
     }
 
@@ -665,10 +785,10 @@ void reduce_warehouse(string category_name, string serial_number) {
 void advance_stage() {
     string category_name;
     std::cout << "Type the name of the category: " << std::endl;
-    std::cin >> category_name;
+    std::getline(std::cin, category_name);
     std::cout << "Type the serial number of the product: " << std::endl;
     string serial_number;
-    std::cin >> category_name;
+    std::getline(std::cin, serial_number);
     if(!check_progress(category_name, serial_number)){
         std::cout << "The product is not ready for the next stage" << std::endl;
         return;
@@ -682,15 +802,14 @@ void advance_stage() {
             return;
         }
         else{
-            std::cout << "Reducing resources" << std::endl;
         reduce_warehouse(category_name, serial_number);
         }
     }
-    
 }
 
 void append_new_stock(){
     Warehouse* new_warehouse = new Warehouse();
+    std::cin.ignore();
     std::cout << "Type the name of the resource: " << std::endl;
     std::cin >> new_warehouse->name;
     std::cout << "Type the quantity of the resource: " << std::endl;
@@ -700,12 +819,41 @@ void append_new_stock(){
 
 void add_stock(){
     string name;
+    int quantity;
+    std::cin.ignore();
     std::cout << "Type the name of the resource: " << std::endl;
     std::cin >> name;
     Warehouse* current = warehouse_inventory;
-    while(current){
-        if(current->name == name){
+    while(current->name != name){
+        if(current->next == warehouse_inventory){
+            std::cout << "Resource not found" << std::endl;
+            return;
+        }
+        current = current->next;
+    }
+    std::cout << "Type the quantity of the resource: " << std::endl;
+    std::cin >> quantity;
+    current->quantity += quantity;
+}
 
+void remove_stock(){
+    string name;
+    std::cin.ignore();
+    std::cout << "Type the name of the resource: " << std::endl;
+    std::cin >> name;
+    Warehouse* temp = warehouse_inventory;
+    Warehouse* current = warehouse_inventory;
+    while(current->name != name){
+        if(current->next == temp){
+            std::cout << "Resource not found" << std::endl;
+            return;
+        }
+        current = current->next;
+    }
+    current->prev->next = current->next;
+    current->next->prev = current->prev;
+    std::cout << "Resource removed successfully" << std::endl;
+}
 
 void staff_menu(){
     bool exit_menu = false;
@@ -727,6 +875,7 @@ void staff_menu(){
                 add_staff();
                 break;
             case 2:
+                std::cin.ignore();
                 std::cout << "Type the id of the employee you want to modify: ";
                 std::cin >> staff_id;
                 modify_staff(staff_id);
@@ -754,34 +903,58 @@ void staff_menu(){
 }
 
 void inventory_menu(){
+    int option;
     bool exit_menu = false;
     string answer;
+    string answer2;
     std::cout << "Welcome to the inventory menu" << std::endl;
     while(exit_menu == false){
-        std::cout << "1. Register category and product" << std::endl;
-        std::cout << "2. Consult category status" << std::endl;
-        std::cout << "3. Print inventory" << std::endl;
-        std::cout << "4. Exit and return to the main menu" << std::endl;
-        int option;
+        std::cout << "1. Register a whole category" << std::endl;
+        std::cout << "2. Register a new product to a category" << std::endl;
+        std::cout << "3. Register a new resource to a product and stage" << std::endl;
+        std::cout << "4. Register a new resource to a stage" << std::endl;
+        std::cout << "5. Consult category status" << std::endl;
+        std::cout << "6. Print inventory" << std::endl;
+        std::cout << "7. Exit and return to the main menu" << std::endl;
         std::cin >> option;
+        std::cin.ignore();
         system("clear");
         switch (option) {
             case 1:
                 std::cout << "Type your category name:  " << std::endl;
-                std::cin >> answer;
+                std::getline(std::cin, answer);
                 complete_category(answer);
                 break;
             case 2:
                 std::cin.ignore();
-                advance_stage();
+                std::cout << "Type the name of the category: " << std::endl;
+                std::getline(std::cin, answer);
+                append_product(answer);
                 break;
             case 3:
+                std::cin.ignore();
+                std::cout << "Type the name of the product: " << std::endl;
+                std::cin >> answer;
+                std::cout << "Type the name of the stage: " << std::endl;
+                std::cin >> answer2;
+                append_resource(answer, answer2);
+                break;
+            case 4:
+                std::cin.ignore();
+                std::cout << "Type the name of the product: " << std::endl;
+                std::cin >> answer;
+                append_stage(answer);
+                break;
+            case 5:
+                advance_stage();
+                break;
+            case 6:
                 std::cout << "----* Warehouse *----" << std::endl;
                 print_circular_linked_list(warehouse_inventory);
                 std::cout << "----* Inventory *----" << std::endl;
                 print_whole_categories();
                 break;
-            case 4:
+            case 7:
                 exit_menu = true;
                 return;
             default:
@@ -797,22 +970,26 @@ void warehouse_menu(){
     int option{0};
     std::cout << "Welcome to the warehouse menu" << std::endl;
     while(!exit_menu){
-        std::cout << "1. Add stock" << std::endl;
-        std::cout << "2. Remove stock" << std::endl;
-        std::cout << "3. Print stock" << std::endl;
-        std::cout << "4. Exit and return to the main menu" << std::endl;
+        std::cout << "1. Add new stock" << std::endl;
+        std::cout << "2. Add stock" << std::endl;
+        std::cout << "3. Remove stock" << std::endl;
+        std::cout << "4. Print stock" << std::endl;
+        std::cout << "5. Exit and return to the main menu" << std::endl;
         std::cin >> option;
         switch (option) {
             case 1:
-                std::cout << "Coming soon!" << std::endl;
+                append_new_stock();
                 break;
             case 2:
-                std::cout << "Coming soon!" << std::endl;
+                add_stock();
                 break;
             case 3:
-                print_circular_linked_list(warehouse_inventory);
+                remove_stock();
                 break;
             case 4:
+                print_circular_linked_list(warehouse_inventory);
+                break;
+            case 5:
                 exit_menu = true;
                 break;
             default:
@@ -822,7 +999,6 @@ void warehouse_menu(){
     }
     system("clear");
 }
-
 
 void menu(){
     int option;
@@ -845,7 +1021,7 @@ void menu(){
                 break;
             case 3:
                 system("clear");
-                std::cout << "Coming soon!" << std::endl;
+                warehouse_menu();
                 break;
             case 4:
                 exit_menu = true;
@@ -882,6 +1058,43 @@ void append_stock() {
     Warehouse* new_stock = new Warehouse(name, amount);
 
     double_circular_append_end(warehouse_inventory, new_stock);
+}
+
+void set(){
+    // Create a Smurfcat category with all the products and stages
+    Category* smurfcat = new Category("Smurfcat");
+    Product* smurfcat_product = new Product("Default", "01");
+    Stage* smurfcat_stage = new Stage("Initial", false);
+    Resource* smurfcat_resource = new Resource("White paint", 5);
+    Resource* smurfcat_resource2 = new Resource("Blue paint", 5);
+    Resource* smurfcat_resource3 = new Resource("Box", 5);
+    Resource* smurfcat_resource4 = new Resource("Bubble wrap", 5);
+    lineal_append_end(smurfcat_stage->resources, smurfcat_resource);
+    lineal_append_end(smurfcat_stage->resources, smurfcat_resource2);
+    lineal_append_end(smurfcat_stage->resources, smurfcat_resource3);
+    lineal_append_end(smurfcat_stage->resources, smurfcat_resource4);
+    lineal_append_end(smurfcat_product->current_stage, smurfcat_stage);
+    lineal_append_end(smurfcat->products, smurfcat_product);
+    append_category(smurfcat);
+
+    Category* Straberry = new Category("StrawberryElephant");
+    Product* Straberry_product = new Product("Default", "02");
+    Stage* Straberry_stage = new Stage("Initial", false);
+    Resource* Straberry_resource = new Resource("Red paint", 5);
+    Resource* Straberry_resource2 = new Resource("Green paint", 5);
+    Resource* Straberry_resource3 = new Resource("Box", 5);
+    Resource* Straberry_resource4 = new Resource("Bubble wrap", 5);
+    Resource* Straberry_resource5 = new Resource("Strawberry", 5);
+    lineal_append_end(Straberry_stage->resources, Straberry_resource);
+    lineal_append_end(Straberry_stage->resources, Straberry_resource2);
+    lineal_append_end(Straberry_stage->resources, Straberry_resource3);
+    lineal_append_end(Straberry_stage->resources, Straberry_resource4);
+    lineal_append_end(Straberry_stage->resources, Straberry_resource5);
+    lineal_append_end(Straberry_product->current_stage, Straberry_stage);
+    lineal_append_end(Straberry->products, Straberry_product);
+    append_category(Straberry);
+
+
 }
 
 int main(){
@@ -951,15 +1164,7 @@ int main(){
     double_circular_append_end(warehouse_inventory, shield);
     double_circular_append_end(warehouse_inventory, wheat);
     double_circular_append_end(warehouse_inventory, stick);
-
-    /* Category *first_category = new Category("Smurf Cat"); */
-    /* first_category->products = new Product("Default", "1"); */
-    /* Stage *first_stage = first_category->products->current_stage = new Stage("Default", false); */
-    /* Resource *first_resource = new Resource("blue_paint", 3); */
-    /* Resource *second_resource = new Resource("Blue paint", 3); */
-    /* lineal_append_end(first_stage->resources, first_resource); */
-    /* lineal_append_end(first_stage->resources, second_resource); */
-    /* append_category(first_category); */
+    set();
     menu();
     return 0;
 }
