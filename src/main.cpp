@@ -53,6 +53,9 @@ void lineal_append_end(T*& linked_list, T*& element_to_append) {
 
 template <typename T>
 void double_append_end(T*& linked_list, T*& element_to_append) {
+    // This function appends an element to the end of a double linked list
+    // It receives the linked list and the element to append
+    // Returns nothing
 	if (!element_to_append) { //If the element to append is null
 		return;
 	}
@@ -129,6 +132,9 @@ void print_circular_linked_list(T*& linked_list) {
 }
 
 void print_whole_categories() {
+    //This is a function that prints the categories of the inventory
+    //It receives nothing
+    //Returns nothing
     Category* current = inventory;
 
     if (!current) {
@@ -314,6 +320,9 @@ void modify_staff(string staff_id) {
 }
 
 Staff* find_staff_by_id(const string& id) {
+    // This function finds a staff member by id
+    // It receives the id of the staff member
+    // Returns a pointer to the staff member
     Staff* current = staff_roster;
     while (current) {
         if (current->id == id) {
@@ -322,10 +331,14 @@ Staff* find_staff_by_id(const string& id) {
         }
         current = current->next;
     }
+    // If the staff member is not found, return null
     return nullptr;
 }
 
 void print_workday(Staff*& staff) {
+    // This function prints the workdays of a staff member
+    // It receives a pointer to the staff member
+    // Returns nothing
     Workday* current = staff->workdays;
     while (current) {
         std::cout << current << std::endl;
@@ -334,6 +347,9 @@ void print_workday(Staff*& staff) {
 }
 
 int worked_hours(const string& start, const string& end) {
+    //This is a function that calculates the worked hours of a staff member
+    //It receives the start hour and the end hour
+    //Returns the worked hours
 	tm parsed_start = parse_hour(start);
 	tm parsed_end = parse_hour(end);
 
@@ -347,6 +363,9 @@ int worked_hours(const string& start, const string& end) {
 }
 
 void registerHours(Staff*& staff) {
+    // This is a function that registers the hours of a staff member
+    // It receives a pointer to the staff member
+    // Returns nothing
 	Workday* workday = new Workday();
 	string weeknd;
 	string holiday;
@@ -372,7 +391,7 @@ void registerHours(Staff*& staff) {
 		workday->is_holiday = false;
 	}
 	workday->worked_hours = worked_hours(workday->start_time, workday->end_time);
-	// Add the workday to the staff workdays list
+	// Add the workday to the staff workdays list if it is empty, if not, append it to the end of the list
 	if (staff->workdays == nullptr) {
 		staff->workdays = workday;
 	}
@@ -386,6 +405,9 @@ void registerHours(Staff*& staff) {
 }
 
 void set_salary(Staff*& person) {
+    // This is a function that calculates the salary of a staff member
+    // It receives a pointer to the staff member
+    // Returns nothing
     int user_worked_hours = 0;
     int user_salary = 0;
     Workday* current = person->workdays;
@@ -406,9 +428,11 @@ void set_salary(Staff*& person) {
         current = current->next;
     }
     user_salary = user_worked_hours * 100;
+    // If the user is experienced, add 1000 to the salary
     if (person->salary_bonuses == "experienced") {
         user_salary += 1000;
     }
+    // If the user is performance, add 500 to the salary
     else if (person->salary_bonuses == "performance") {
         user_salary += 500;
     }
@@ -417,6 +441,9 @@ void set_salary(Staff*& person) {
 }
 
 void register_hours_menu(Staff*& staff) {
+    // This is a function that prints the register hours menu
+    // It receives a pointer to the staff member
+    // Returns nothing
     string id;
     std::cin.ignore();
     std::cout << "Register hours menu" << std::endl;
@@ -431,6 +458,9 @@ void register_hours_menu(Staff*& staff) {
 }
 
 void consult_salary(Staff*& List) {
+    // This is a function that prints the consult salary menu
+    // It receives a pointer to the staff member
+    // Returns nothing
     string id;
     std::cin.ignore();
     std::cout << "Consult salary menu" << std::endl;
@@ -460,6 +490,9 @@ void stock_inquiry(Category*& selected_category) {
 }
 
 void state_inquiry(string serial_number){
+    //This is a function that prints the state of a product
+    //It receives the serial number of the product
+    //Returns nothing
     Category* current = inventory;
     while(current){
         if(current->products->serial_number == serial_number){
@@ -545,7 +578,15 @@ void add_resources(Resource *&resource_list, Resource *&resource_to_add) {
 //------> Evaluate if this functions will stay or we will replace the template conversor <------
 
 void complete_category(const string name){
-    // This function can be factored into several smaller functions 
+    //This is a function that completes a category of the inventory
+    //It receives the name of the category
+    //Returns nothing
+
+    //Create a new category, set the name of the category to the name of the category to complete
+    //Create a new product, set the name of the product to the name of the category to complete
+    //Create a new stage, set the name of the stage to the name of the category to complete
+    //Create a new resource, set the name of the resource to the name of the category to complete
+    //Create a pointer to the current node, set it to the inventory
     Category *new_category = new Category(name);
     Product *new_product = nullptr;
     Stage *stage_list = nullptr;
@@ -556,6 +597,7 @@ void complete_category(const string name){
     std::cin >> products;
     std::cin.ignore();
     for (int i = 0; i < products; i++) {
+        // Iterate through the products of the category and add them to the category
         new_product = new Product();
         std::cout << "Type the product you want to register: " << std::endl;
         std::getline(std::cin, new_product->name);
@@ -566,6 +608,7 @@ void complete_category(const string name){
         std::cin >> stages;
         std::cin.ignore();
         for (int j =0; j < stages; j++){
+            // Iterate through the stages of the product and add them to the product
             Stage *new_stage = new Stage();
             std::cout << "Type the name of the stage: " << std::endl;
             std::getline(std::cin, new_stage->stage_name);
@@ -577,6 +620,7 @@ void complete_category(const string name){
             std::cin >> amount;
             std::cin.ignore();
             for (int y = 0; y < amount; y++) {
+                // Iterate through the resources of the stage and add them to the stage
                 Resource *new_resource = new Resource();
                 std::cout << "Type the name of the resource needed to build the product" << std::endl;
                 std::getline(std::cin, new_resource->name);
@@ -599,6 +643,11 @@ void complete_category(const string name){
 }
 
 void append_product(string category) {
+    //This is a function that appends a product to a category
+    //It receives the name of the category
+    //Returns nothing
+
+    //Create a pointer to the current node, set it to the inventory
     Category* current = inventory; //Create a pointer to the current node
     while (current->category_name != category) { //While the current node is not null, move to the next node
         current = current->next;
@@ -616,6 +665,7 @@ void append_product(string category) {
             std::cin >> stages;
             std::cin.ignore();
             for (int i = 0; i < stages; i++) {
+                // Iterate through the stages of the product and add them to the product
                 Stage* new_stage = new Stage();
                 std::cout << "Type the name of the stage: " << std::endl;
                 std::getline(std::cin, new_stage->stage_name);
@@ -627,6 +677,7 @@ void append_product(string category) {
                 std::cin >> amount;
                 std::cin.ignore();
                 for (int i = 0; i < amount; i++) {
+                    // Iterate through the resources of the stage and add them to the stage
                     Resource* new_resource = new Resource();
                     std::cout << "Type the name of the resource needed to build the product" << std::endl;
                     std::getline(std::cin, new_resource->name);
@@ -645,26 +696,36 @@ void append_product(string category) {
 }
 
 void append_resource(string category, string stage, string product) {
+    //This is a function that appends a resource to a stage
+    //It receives the name of the category, the name of the stage and the name of the product
+    //Returns nothing
+
+    //Search for the category
     Category* current = inventory;
     while (current->category_name != category) {
         current = current->next;
     }
+    //if the category is not found, exit the function
     if (!current) {
         std::cout << "Category not found" << std::endl;
         return;
     }
+    //Search for the product
     Product* current_product = current->products;
     while (current_product->name != product) {
         current_product = current_product->next;
     }
+    //if the product is not found, exit the function
     if (!current_product) {
         std::cout << "Product not found" << std::endl;
         return;
     }
+    //Search for the stage
     Stage* current_stage = current_product->current_stage;
     while (current_stage->stage_name != stage) {
         current_stage = current_stage->next;
     }
+    //if the stage is not found, exit the function
     if (!current_stage) {
         std::cout << "Stage not found" << std::endl;
         return;
@@ -674,6 +735,7 @@ void append_resource(string category, string stage, string product) {
     std::cin >> amount;
     std::cin.ignore();
     for (int i = 0; i < amount; i++) {
+        // Iterate through the resources of the stage and add them to the stage
         Resource* new_resource = new Resource();
         std::cout << "Type the name of the resource needed to build the product" << std::endl;
         std::getline(std::cin, new_resource->name);
@@ -686,6 +748,9 @@ void append_resource(string category, string stage, string product) {
 }
 
 Category* find_category(const string& category_name) {
+    // This function finds a category by name
+    // It receives the name of the category
+    // Returns a pointer to the category
     Category* current = inventory;
     while (current) {
         if (current->category_name == category_name) {
@@ -693,22 +758,31 @@ Category* find_category(const string& category_name) {
         }
         current = current->next;
     }
+    // If the category is not found, return null
     return nullptr;
 }
 
 void add_stage(string category, string product){
+    //This is a function that adds a stage to a product
+    //It receives the name of the category and the name of the product
+    //Returns nothing
+
+    //Search for the category
     Category *current = inventory;
     while(current->category_name != category){
         current = current->next;
     }
+    //if the category is not found, exit the function
     if (!current) {
         std::cout << "Category not found" << std::endl;
         return;
     }
+    //Search for the product
     Product *current_product = current->products;
     while(current_product->name != product){
         current_product = current_product->next;
     }
+    //if the product is not found, exit the function
     if (!current_product) {
         std::cout << "Product not found" << std::endl;
         return;
@@ -718,6 +792,7 @@ void add_stage(string category, string product){
     std::cin >> amount;
     std::cin.ignore();
     for (int i = 0; i < amount; i++) {
+        // Iterate through the stages of the product and add them to the product
         Stage *new_stage = new Stage();
         std::cout << "Type the name of the stage: " << std::endl;
         std::getline(std::cin, new_stage->stage_name);
@@ -729,6 +804,7 @@ void add_stage(string category, string product){
         std::cin >> amount;
         std::cin.ignore();
         for (int i = 0; i < amount; i++) {
+            // Iterate through the resources of the stage and add them to the stage
             Resource *new_resource = new Resource();
             std::cout << "Type the name of the resource needed to build the product" << std::endl;
             std::getline(std::cin, new_resource->name);
@@ -743,15 +819,22 @@ void add_stage(string category, string product){
 }
 
 Product* find_product_by_serial_number(const string& serial_number, string category_name) {
+    // This function finds a product by serial number
+    // It receives the serial number of the product
+    // Returns a pointer to the product
+
+    // Search for the category
     Category* current = inventory;
     while (current) {
         if (current->category_name == category_name)
             break;
         current = current->next;
     }
+    // If the category is not found, exit the function
     if (!current) {
         return nullptr;
     }
+    // Search for the product and return it if the name matches
     std::cout << current->category_name << std::endl;
     Product* current_product = current->products;
     while (current_product) {
@@ -760,12 +843,18 @@ Product* find_product_by_serial_number(const string& serial_number, string categ
         }
         current_product = current_product->next;
     }
+    // If the product is not found, return null
     return nullptr;
 }
 
 bool check_progress(string category_name, string serial_number){
+    //This is a function that checks the progress of a product
+    //It receives the name of the category and the serial number of the product
+    //Returns true if the product is ready for the next stage, false if not
+    //Search for the stage calling the find_product_by_serial_number function
     Stage* current_stage = find_product_by_serial_number(serial_number, category_name)->current_stage;
     while(current_stage){
+        //If the stage is not completed, return false, because the product is not ready for the next stage
         Resource* current_resource = current_stage->resources;
         Warehouse* temp = warehouse_inventory;
         Warehouse* current_warehouse = warehouse_inventory;
@@ -782,13 +871,18 @@ bool check_progress(string category_name, string serial_number){
         }
         current_stage = current_stage->next;
     }
+    // If the product is ready for the next stage, return true
     return true;
 }
 
 void reduce_warehouse(string category_name, string serial_number) {
+    //This is a function that reduces the warehouse inventory
+    //It receives the name of the category and the serial number of the product
+    //Returns nothing
     Product* product = find_product_by_serial_number(serial_number, category_name);
     Stage* current_stage = product->current_stage;
     if (current_stage->completed) {
+        // If the product is already completed, exit the function
         while (current_stage->completed) {
             if (current_stage->next == nullptr) {
                 std::cout << "The product is already completed" << std::endl;
@@ -798,10 +892,9 @@ void reduce_warehouse(string category_name, string serial_number) {
         }
     }
     Resource* current_resource = current_stage->resources;
-    /* Warehouse* temp = warehouse_inventory; */
-
     while (current_resource) {
         Warehouse* current_warehouse = warehouse_inventory;
+        // Iterate through the resources of the stage and reduce the warehouse inventory, warehouse inventory is a double circular linked list so we need to iterate until it different from the start circular list
         do{
             if(current_resource->name == current_warehouse->name){
                 current_warehouse->quantity -= current_resource->quantity;
@@ -816,17 +909,22 @@ void reduce_warehouse(string category_name, string serial_number) {
 }
 
 void advance_stage() {
+    // This is a function that advances the stage of a product
+    // It asks for the name of the category and the serial number of the product
+    // Returns nothing
     string category_name;
     std::cout << "Type the name of the category: " << std::endl;
     std::getline(std::cin, category_name);
     std::cout << "Type the serial number of the product: " << std::endl;
     string serial_number;
     std::getline(std::cin, serial_number);
+    // If the product is not ready for the next stage, exit the function
     if(!check_progress(category_name, serial_number)){
         std::cout << "The product is not ready for the next stage" << std::endl;
         return;
     }
     else{
+        // If the product is ready for the next stage, reduce the warehouse inventory
         std::cout << "The product is ready for the next stage" << std::endl;
         std::cout << "Do you want to advance the stage? (true/false)" << std::endl;
         bool answer;
@@ -841,6 +939,9 @@ void advance_stage() {
 }
 
 void append_new_stock(){
+    // This is a function that appends a new stock to the warehouse inventory
+    // It receives nothing
+    // Returns nothing
     Warehouse* new_warehouse = new Warehouse();
     std::cin.ignore();
     std::cout << "Type the name of the resource: " << std::endl;
@@ -851,12 +952,16 @@ void append_new_stock(){
 }
 
 void add_stock(){
+    // This is a function that adds stock to the warehouse inventory
+    // It receives nothing
+    // Returns nothing
     string name;
     int quantity;
     std::cin.ignore();
     std::cout << "Type the name of the resource: " << std::endl;
     std::cin >> name;
     Warehouse* current = warehouse_inventory;
+    // It iterates through the warehouse inventory and adds the stock to the asked resource
     while(current->name != name){
         if(current->next == warehouse_inventory){
             std::cout << "Resource not found" << std::endl;
@@ -870,12 +975,16 @@ void add_stock(){
 }
 
 void remove_stock(){
+    // This is a function that removes stock from the warehouse inventory
+    // It receives nothing
+    // Returns nothing
     string name;
     std::cin.ignore();
     std::cout << "Type the name of the resource: " << std::endl;
     std::cin >> name;
     Warehouse* temp = warehouse_inventory;
     Warehouse* current = warehouse_inventory;
+    // It iterates through the warehouse inventory and removes the stock from the asked resource
     while(current->name != name){
         if(current->next == temp){
             std::cout << "Resource not found" << std::endl;
@@ -883,12 +992,16 @@ void remove_stock(){
         }
         current = current->next;
     }
+    // remove the node from the warehouse inventory
     current->prev->next = current->next;
     current->next->prev = current->prev;
     std::cout << "Resource removed successfully" << std::endl;
 }
 
 void staff_menu(){
+    // This is a function that prints the staff menu, with consist of the staff options
+    // It receives nothing
+    // Returns nothing
     bool exit_menu = false;
     string staff_id;
     std::cout << "Welcome to the staff menu" << std::endl;
@@ -905,30 +1018,38 @@ void staff_menu(){
         system("clear");
         switch (option) {
             case 1:
+                // Call the add_staff function, that adds a staff member to the staff roster list
                 add_staff();
                 break;
             case 2:
+                // Call the modify_staff function, that modifies a staff member of the staff roster list
                 std::cin.ignore();
                 std::cout << "Type the id of the employee you want to modify: ";
                 std::cin >> staff_id;
                 modify_staff(staff_id);
                 break;
             case 3:
+                // Call the remove_staff function, that removes a staff member of the staff roster list
                 remove_staff();
                 break;
             case 4:
+                // Call the register_hours_menu function, that prints the register hours menu
                 register_hours_menu(staff_roster);
                 break;
             case 5:
+                // Call the consult_salary function, that prints the consult salary menu
                 consult_salary(staff_roster);
                 break;
             case 6:
+                // Call the print_linked_list function, that prints the staff roster list
                 print_linked_list(staff_roster);
                 break;
             case 7:
+                // Exit the menu
                 exit_menu = true;
                 return;
             default:
+                // If the option is invalid, print an error message
                 std::cout << "Invalid option" << std::endl;
                 break;
         }
@@ -936,6 +1057,9 @@ void staff_menu(){
 }
 
 void inventory_menu(){
+    // This is a function that prints the inventory menu, with consist of the inventory options
+    // It receives nothing
+    // Returns nothing
     int option;
     bool exit_menu = false;
     string answer;
@@ -955,16 +1079,19 @@ void inventory_menu(){
         system("clear");
         switch (option) {
             case 1:
+                // Call the complete_category function, that completes a category of the inventory
                 std::cout << "Type your category name:  " << std::endl;
                 std::getline(std::cin, answer);
                 complete_category(answer);
                 break;
             case 2:
+                // Call the append_product function, that appends a product to a category
                 std::cout << "Type the name of the category: " << std::endl;
                 std::getline(std::cin, answer);
                 append_product(answer);
                 break;
             case 3:
+                // Call the append_resource function, that appends a resource to a stage
                 std::cout << "Type the name of the category: " << std::endl;
                 std::getline(std::cin, answer3);
                 std::cout << "Type the name of the stage: " << std::endl;
@@ -974,6 +1101,7 @@ void inventory_menu(){
                 append_resource(answer3, answer, answer2);
                 break;
             case 4:
+                // Call the add_stage function, that adds a stage to a product
                 std::cout << "Type the name of the category: " << std::endl;
                 std::getline(std::cin, answer2);
                 std::cout << "Type the name of the product: " << std::endl;
@@ -981,22 +1109,27 @@ void inventory_menu(){
                 add_stage(answer2, answer);
                 break;
             case 5:
+                // Call the advance_stage function, that advances the stage of a product
                 advance_stage();
                 break;
             case 6:
+                // Call the print_whole_categories function, that prints the inventory
                 std::cout << "----* Warehouse *----" << std::endl;
                 print_circular_linked_list(warehouse_inventory);
                 std::cout << "----* Inventory *----" << std::endl;
                 print_whole_categories();
                 break;
             case 7:
+                // Exit the menu
                 exit_menu = true;
                 return;
             default:
+                // If the option is invalid, print an error message
                 std::cout << "Invalid option" << std::endl;
                 break;
         }
     }
+    // Clear the terminal only works on linux
     system("clear");
 }
 
@@ -1013,25 +1146,32 @@ void warehouse_menu(){
         std::cin >> option;
         switch (option) {
             case 1:
+                // Call the append_new_stock function, that appends a new stock to the warehouse inventory
                 append_new_stock();
                 break;
             case 2:
+                // Call the add_stock function, that adds stock to the warehouse inventory
                 add_stock();
                 break;
             case 3:
+                // Call the remove_stock function, that removes stock from the warehouse inventory
                 remove_stock();
                 break;
             case 4:
+                // Call the print_circular_linked_list function, that prints the warehouse inventory
                 print_circular_linked_list(warehouse_inventory);
                 break;
             case 5:
+                // Exit the menu
                 exit_menu = true;
                 break;
             default:
+                // If the option is invalid, print an error message
                 std::cout << "Invalid option" << std::endl;
                 break;
         }
     }
+    // Clear the terminal only works on linux
     system("clear");
 }
 
@@ -1047,21 +1187,26 @@ void menu(){
         std::cin >> option;
         switch (option) {
             case 1:
+                // Call the staff_menu function, that prints the staff menu and clears the terminal
                 system("clear");
                 staff_menu();
                 break;
             case 2:
+                // Call the inventory_menu function, that prints the inventory menu and clears the terminal
                 system("clear");
                 inventory_menu();
                 break;
             case 3:
+                // Call the warehouse_menu function, that prints the warehouse menu and clears the terminal
                 system("clear");
                 warehouse_menu();
                 break;
             case 4:
+                // Exit the menu
                 exit_menu = true;
                 break;
             default:
+                // If the option is invalid, print an error message
                 std::cout << "Invalid option" << std::endl;
                 break;
         }
@@ -1069,8 +1214,12 @@ void menu(){
 }
 
 void add_stock(string name) {
+    // This is a function that adds stock to a resource
+    // It receives the name of the resource
+    // Returns nothing
     int amount{};
     Warehouse* current = warehouse_inventory;
+    // Iterate through the warehouse inventory and add the stock to the asked resource
     while (current) {
         if (current->name == name) {
             break;
@@ -1079,17 +1228,22 @@ void add_stock(string name) {
     }
     std::cout << "Type the amount of stock you want to add: " << std::endl;
     std::cin >> amount;
+    // Add the stock to the resource
     current->quantity += amount;
     std::cout << "Stock added successfully" << std::endl;
 }
 
 void append_stock() {
+    // This is a function that appends a new stock to the warehouse inventory
+    // It receives nothing
+    // Returns nothing
     string name;
     int amount{};
     std::cout << "Type the name of the product you want to add stock: " << std::endl;
     std::cin >> name;
     std::cout << "Type the amount of stock you want to add: " << std::endl;
     std::cin >> amount;
+    // Create a new warehouse node and append it to the warehouse inventory
     Warehouse* new_stock = new Warehouse(name, amount);
 
     double_circular_append_end(warehouse_inventory, new_stock);
@@ -1111,7 +1265,8 @@ void set(){
     lineal_append_end(smurfcat_product->current_stage, smurfcat_stage);
     lineal_append_end(smurfcat->products, smurfcat_product);
     append_category(smurfcat);
-
+    
+    // Create a StrawberryElephant category with all the products and stages
     Category* Straberry = new Category("StrawberryElephant");
     Product* Straberry_product = new Product("Default", "02");
     Stage* Straberry_stage = new Stage("Initial", false);
@@ -1128,22 +1283,24 @@ void set(){
     lineal_append_end(Straberry_product->current_stage, Straberry_stage);
     lineal_append_end(Straberry->products, Straberry_product);
     append_category(Straberry);
-
-
 }
 
 int main(){
-	Staff* first_staff = new Staff("1", "boss", "experience", "managment", "administration"); //Create the first employee, the boss
-	Staff* second_staff = new Staff("2", "employee", "experience", "production", "production"); //Create the second employee, the employee
-	Staff* third_staff = new Staff("3", "boss", "experience", "managment", "administration"); //Create the first employee, the boss
-	Staff* fourth_staff = new Staff("4", "intern", "experience", "managment", "maintenance"); //Create the first employee, the boss
-	Staff* fifth_staff = new Staff("5", "boss", "experience", "managment", "production"); //Create the first employee, the boss
+    // Create the staff roster list
+	Staff* first_staff = new Staff("1", "boss", "experienced", "managment", "administration"); //Create the first employee, the boss
+	Staff* second_staff = new Staff("2", "employee", "experienced", "production", "production"); //Create the second employee, the employee
+	Staff* third_staff = new Staff("3", "boss", "experienced", "managment", "administration"); //Create the first employee, the boss
+	Staff* fourth_staff = new Staff("4", "intern", "experienced", "managment", "maintenance"); //Create the first employee, the boss
+	Staff* fifth_staff = new Staff("5", "boss", "experienced", "managment", "production"); //Create the first employee, the boss
+
+    // Append the staff members to the staff roster list
     double_append_end(staff_roster,first_staff);
     double_append_end(staff_roster,second_staff);
     double_append_end(staff_roster,third_staff);
     double_append_end(staff_roster,fourth_staff);
     double_append_end(staff_roster,fifth_staff);
-
+    
+    // Create the warehouse inventory
     Warehouse *plastic = new Warehouse("Plastic", 50);
     Warehouse *metal = new Warehouse("Cloth", 30);
     Warehouse *wood = new Warehouse("Wood", 20);
@@ -1172,6 +1329,7 @@ int main(){
     Warehouse *wheat = new Warehouse("Wheat", 40);
     Warehouse *stick = new Warehouse("Stick", 60);
 
+    // Append the resources to the warehouse inventory
     double_circular_append_end(warehouse_inventory, plastic);
     double_circular_append_end(warehouse_inventory, metal);
     double_circular_append_end(warehouse_inventory, wood);
@@ -1199,8 +1357,12 @@ int main(){
     double_circular_append_end(warehouse_inventory, shield);
     double_circular_append_end(warehouse_inventory, wheat);
     double_circular_append_end(warehouse_inventory, stick);
+
+    // Call the set function, that creates the categories, products and stages
     set();
+    // Call the menu function, that prints the main menu
     menu();
+    // Exit the program
     return 0;
 }
 
