@@ -600,6 +600,9 @@ void complete_category(const string name){
 
 void append_product(string category) {
     Category* current = inventory; //Create a pointer to the current node
+    while (current->category_name != category) { //While the current node is not null, move to the next node
+        current = current->next;
+    }
     while (current) {
         if (current->category_name == category) { //If the current node is the selected category, append the product to the category
             Product* new_product = new Product();
@@ -641,60 +644,44 @@ void append_product(string category) {
     }
 }
 
-void append_resource(string product, string stage) {
-    Product* current_product = inventory->products; //Create a pointer to the current node
-    while (current_product) {
-        if (current_product->serial_number == product) { //If the current node is the selected product, append the resource to the product
-            Stage* current_stage = current_product->current_stage;
-            while (current_stage) {
-                if (current_stage->stage_name == stage) { //If the current node is the selected stage, append the resource to the stage
-                    Resource* new_resource = new Resource();
-                    std::cout << "Type the name of the resource needed to build the product" << std::endl;
-                    std::getline(std::cin, new_resource->name);
-                    std::cout << "Type the quantity of the resource needed to build the product" << std::endl;
-                    std::cin >> new_resource->quantity;
-                    std::cin.ignore();
-                    // Add the Resource to the components list
-                    lineal_append_end(current_stage->resources, new_resource);
-                    return; //Return nothing
-                }
-                current_stage = current_stage->next;
-            }
-        }
+void append_resource(string category, string stage, string product) {
+    Category* current = inventory;
+    while (current->category_name != category) {
+        current = current->next;
+    }
+    if (!current) {
+        std::cout << "Category not found" << std::endl;
+        return;
+    }
+    Product* current_product = current->products;
+    while (current_product->name != product) {
         current_product = current_product->next;
     }
-}
-
-
-void append_stage(string product) {
-    Product* current_product = inventory->products; //Create a pointer to the current node
-    while (current_product) {
-        if (current_product->name == product) { //If the current node is the selected product, append the stage to the product
-            std::cin.ignore();
-            Stage* new_stage = new Stage();
-            std::cout << "Type the name of the stage: " << std::endl;
-            std::getline(std::cin, new_stage->stage_name);
-            std::cout << "Type if the stage is completed (true/false): " << std::endl;
-            std::cin >> std::boolalpha >> new_stage->completed;
-            std::cin.ignore();
-            std::cout << "How many resources does the stage have? " << std::endl;
-            int amount;
-            std::cin >> amount;
-            std::cin.ignore();
-            for (int i = 0; i < amount; i++) {
-                Resource* new_resource = new Resource();
-                std::cout << "Type the name of the resource needed to build the product" << std::endl;
-                std::getline(std::cin, new_resource->name);
-                std::cout << "Type the quantity of the resource needed to build the product" << std::endl;
-                std::cin >> new_resource->quantity;
-                std::cin.ignore();
-                // Add the Resource to the components list
-                lineal_append_end(new_stage->resources, new_resource);
-            }
-            lineal_append_end(current_product->current_stage, new_stage);
-            return; //Return nothing
-        }
-        current_product = current_product->next;
+    if (!current_product) {
+        std::cout << "Product not found" << std::endl;
+        return;
+    }
+    Stage* current_stage = current_product->current_stage;
+    while (current_stage->stage_name != stage) {
+        current_stage = current_stage->next;
+    }
+    if (!current_stage) {
+        std::cout << "Stage not found" << std::endl;
+        return;
+    }
+    int amount;
+    std::cout << "How many resources do you want to add? " << std::endl;
+    std::cin >> amount;
+    std::cin.ignore();
+    for (int i = 0; i < amount; i++) {
+        Resource* new_resource = new Resource();
+        std::cout << "Type the name of the resource needed to build the product" << std::endl;
+        std::getline(std::cin, new_resource->name);
+        std::cout << "Type the quantity of the resource needed to build the product" << std::endl;
+        std::cin >> new_resource->quantity;
+        std::cin.ignore();
+        // Add the Resource to the components list
+        lineal_append_end(current_stage->resources, new_resource);
     }
 }
 
@@ -707,6 +694,52 @@ Category* find_category(const string& category_name) {
         current = current->next;
     }
     return nullptr;
+}
+
+void add_stage(string category, string product){
+    Category *current = inventory;
+    while(current->category_name != category){
+        current = current->next;
+    }
+    if (!current) {
+        std::cout << "Category not found" << std::endl;
+        return;
+    }
+    Product *current_product = current->products;
+    while(current_product->name != product){
+        current_product = current_product->next;
+    }
+    if (!current_product) {
+        std::cout << "Product not found" << std::endl;
+        return;
+    }
+    int amount;
+    std::cout << "How many stages do you want to add? " << std::endl;
+    std::cin >> amount;
+    std::cin.ignore();
+    for (int i = 0; i < amount; i++) {
+        Stage *new_stage = new Stage();
+        std::cout << "Type the name of the stage: " << std::endl;
+        std::getline(std::cin, new_stage->stage_name);
+        std::cout << "Type if the stage is completed (true/false): " << std::endl;
+        std::cin >> std::boolalpha >> new_stage->completed;
+        std::cin.ignore();
+        std::cout << "How many resources does the stage have? " << std::endl;
+        int amount;
+        std::cin >> amount;
+        std::cin.ignore();
+        for (int i = 0; i < amount; i++) {
+            Resource *new_resource = new Resource();
+            std::cout << "Type the name of the resource needed to build the product" << std::endl;
+            std::getline(std::cin, new_resource->name);
+            std::cout << "Type the quantity of the resource needed to build the product" << std::endl;
+            std::cin >> new_resource->quantity;
+            std::cin.ignore();
+            // Add the Resource to the components list
+            lineal_append_end(new_stage->resources, new_resource);
+        }
+        lineal_append_end(current_product->current_stage, new_stage);
+    }
 }
 
 Product* find_product_by_serial_number(const string& serial_number, string category_name) {
@@ -907,12 +940,13 @@ void inventory_menu(){
     bool exit_menu = false;
     string answer;
     string answer2;
+    string answer3;
     std::cout << "Welcome to the inventory menu" << std::endl;
     while(exit_menu == false){
         std::cout << "1. Register a whole category" << std::endl;
         std::cout << "2. Register a new product to a category" << std::endl;
-        std::cout << "3. Register a new resource to a product and stage" << std::endl;
-        std::cout << "4. Register a new resource to a stage" << std::endl;
+        std::cout << "3. Register a new resource to a stage" << std::endl;
+        std::cout << "4. Register a new stage to a product" << std::endl;
         std::cout << "5. Consult category status" << std::endl;
         std::cout << "6. Print inventory" << std::endl;
         std::cout << "7. Exit and return to the main menu" << std::endl;
@@ -926,24 +960,25 @@ void inventory_menu(){
                 complete_category(answer);
                 break;
             case 2:
-                std::cin.ignore();
                 std::cout << "Type the name of the category: " << std::endl;
                 std::getline(std::cin, answer);
                 append_product(answer);
                 break;
             case 3:
-                std::cin.ignore();
-                std::cout << "Type the name of the product: " << std::endl;
-                std::cin >> answer;
+                std::cout << "Type the name of the category: " << std::endl;
+                std::getline(std::cin, answer3);
                 std::cout << "Type the name of the stage: " << std::endl;
-                std::cin >> answer2;
-                append_resource(answer, answer2);
+                std::getline(std::cin, answer);
+                std::cout << "Type the name of the product: " << std::endl;
+                std::getline(std::cin, answer2);
+                append_resource(answer3, answer, answer2);
                 break;
             case 4:
-                std::cin.ignore();
+                std::cout << "Type the name of the category: " << std::endl;
+                std::getline(std::cin, answer2);
                 std::cout << "Type the name of the product: " << std::endl;
                 std::cin >> answer;
-                append_stage(answer);
+                add_stage(answer2, answer);
                 break;
             case 5:
                 advance_stage();
