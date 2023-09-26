@@ -164,7 +164,7 @@ void print_whole_categories() {
             Resource* current_resource = current_stage->resources; // Mover esto aquí
             std::cout << "Resources needed of this stage: " << std::endl;
             while (current_resource) {
-                std::cout << current_resource->name << std::endl;
+                std::cout << current_resource->name << " x" <<  current_resource->quantity << std::endl;
                 current_resource = current_resource->next;
             }
             current_stage = current_stage->next;
@@ -177,6 +177,19 @@ void print_whole_categories() {
     std::cout << "\n";
 }
 
+bool check_repeated(const string& id, Staff *list){
+    // This is a function that checks if an id is repeated
+    // It receives the id and a pointer to the staff roster
+    // Returns true if the id is repeated, false if not
+    Staff* current = list;
+    while (current) {
+        if (current->id == id) {
+            return true;
+        }
+        current = current->next;
+    }
+    return false;
+}
 void sort_by_sector() {
 	//This is a function that sorts the staff roster by sector
 	//Recieves nothing
@@ -191,19 +204,19 @@ void sort_by_sector() {
 	while (current) {
 		next = current->next; //Set the next node to the next node of the current node
 		current->next = nullptr; //Set the next node of the current node to null
-
-		if (current->employment_sector == "administration") { //If the current node is in the administration sector, append it to the administration sector linked list
-			double_append_end(administration_sector, current);
-		}
-		else if (current->employment_sector == "production") { //If the current node is in the production sector, append it to the production sector linked list
-			double_append_end(production_sector, current);
-		}
-		else if (current->employment_sector == "maintenance") { //If the current node is in the maintenance sector, append it to the maintenance sector linked list
-			double_append_end(maintenance_sector, current);
-		}
+        if(!check_repeated(current->id, administration_sector) && !check_repeated(current->id, production_sector) && !check_repeated(current->id, maintenance_sector)){
+            if (current->employment_sector == "administration") { //If the current node is in the administration sector, append it to the administration sector linked list
+                double_append_end(administration_sector, current);
+            }
+            else if (current->employment_sector == "production") { //If the current node is in the production sector, append it to the production sector linked list
+                double_append_end(production_sector, current);
+            }
+            else if (current->employment_sector == "maintenance") { //If the current node is in the maintenance sector, append it to the maintenance sector linked list
+                double_append_end(maintenance_sector, current);
+            }
+        }
 		current = next;
 	}
-
 	Staff* new_staff_roster = nullptr; //Create a pointer to the new staff roster linked list, set it to null 
 	double_append_end(new_staff_roster, administration_sector);
 	double_append_end(new_staff_roster, production_sector);
@@ -222,22 +235,22 @@ void sort_by_job_title() {
 
 	Staff* current = staff_roster; //Create a pointer to the current node
 	Staff* next = nullptr; //Create a pointer to the next node
-	while (current) {
-		next = current->next; //Set the next node to the next node of the current node
-		current->next = nullptr; //Set the next node of the current node to null
-
-		if (current->job_title == "boss") { //If the current node is a boss, append it to the boss linked list
-			double_append_end(boss, current);
-		}
-		else if (current->job_title == "employee") { //If the current node is an employee, append it to the employee linked list
-			double_append_end(employee, current);
-		}
-		else if (current->job_title == "intern") { //If the current node is an intern, append it to the intern linked list
-			double_append_end(intern, current);
-		}
-		current = next;
-	}
-
+    while(current != nullptr){
+        next = current->next; //Set the next node to the next node of the current node
+        current->next = nullptr; //Set the next node of the current node to null
+        if(!check_repeated(current->id, boss) && !check_repeated(current->id, employee) && !check_repeated(current->id, intern)){
+            if (current->job_title == "boss") { //If the current node is the boss, append it to the boss linked list
+                double_append_end(boss, current);
+            }
+            else if (current->job_title == "employee") { //If the current node is the employee, append it to the employee linked list
+                double_append_end(employee, current);
+            }
+            else if (current->job_title == "intern") { //If the current node is the intern, append it to the intern linked list
+                double_append_end(intern, current);
+            }
+        }
+        current = next;
+    }
 	Staff* new_staff_roster = nullptr; //Create a pointer to the new staff roster linked list, set it to null
 	double_append_end(new_staff_roster, boss);
 	double_append_end(new_staff_roster, employee);
@@ -277,17 +290,38 @@ void assign_boss(string new_staff_id) {
 	}
 }
 
+bool check_repeated_id(const string& id) {
+    //This is a function that checks if an id is repeated
+    //It receives the id
+    //Returns true if the id is repeated, false if not
+
+    Staff* current = staff_roster; //Create a pointer to the current node
+    while (current) { //While the current node is not null, search for the id
+        if (current->id == id) {
+            return true;
+        }
+        current = current->next;
+    }
+    return false;
+}
+
 void add_staff() {
 	//This is a function that adds a new employee to the staff roster, it requests the information of the employee
 	//Recieves nothing
 	//Returns nothing
 
 	//Here is where the information is requested
+    string id;
 	Staff* new_staff = new Staff(); //Create a pointer to the new employee
 	std::cout << "Please fill the following information: " << std::endl;
     std::cin.ignore();
 	std::cout << "Id: ";
-    std::getline(std::cin, new_staff->id);
+    std::getline(std::cin, id);
+    while(check_repeated_id(id)){
+        std::cout << "The id is already in use, please type another one: " << std::endl;
+        std::getline(std::cin, id);
+    }
+    new_staff->id = id;
 	std::cout << "Job title: ";
     std::getline(std::cin, new_staff->job_title);
 	std::cout << "Salary bonuses: ";
@@ -338,6 +372,7 @@ void modify_staff(string staff_id) {
 	//This function modifies the information of an employee
 	//Recieves the id of the employee
 	//Returns nothing
+    string id;
 	string property_to_change;
 	std::cout << "Type the property you want to change: ";
     std::cin >> property_to_change;
@@ -361,7 +396,12 @@ void modify_staff(string staff_id) {
 	//Case comparison, this is to determine which property of the employee to change
 	if (property_to_change == "id") { //If the property to change is the id, change the id of the employee
 		std::cout << "New id: ";
-        std::getline(std::cin, staff_to_modify->id);
+        std::getline(std::cin, id);
+        while(check_repeated_id(id)){
+            std::cout << "The id is already in use, please type another one: " << std::endl;
+            std::getline(std::cin, id);
+        }
+        staff_to_modify->id = id;
 	}
 	else if (property_to_change == "job_title") { //If the property to change is the job title, change the job title of the employee
 		std::cout << "New job title: ";
@@ -460,17 +500,21 @@ void registerHours(Staff*& staff) {
 		workday->is_holiday = false;
 	}
 	workday->worked_hours = worked_hours(workday->start_time, workday->end_time);
-	// Add the workday to the staff workdays list if it is empty, if not, append it to the end of the list
-	if (staff->workdays == nullptr) {
-		staff->workdays = workday;
-	}
-	else {
-		Workday* current = staff->workdays;
-		while (current->next) {
-			current = current->next;
-		}
-		current->next = workday;
-	}
+	// Add the workday to the staff workdays list, it is a circular simple list so it must be added to the end
+    if (!staff->workdays) {
+        staff->workdays = workday;
+        workday->next = workday;
+        return;
+    }
+    else{
+        Workday* current = staff->workdays;
+        while (current->next != staff->workdays) {
+            current = current->next;
+        }
+        current->next = workday;
+        workday->next = staff->workdays;
+    }
+ 
 }
 
 void set_salary(Staff*& person) {
@@ -480,6 +524,7 @@ void set_salary(Staff*& person) {
     int user_worked_hours = 0;
     int user_salary = 0;
     Workday* current = person->workdays;
+    Workday* temp = person->workdays;
     int days = 0;
     int counter = 0;
     std::cout << "Type how many days you want to consult: " << std::endl;
@@ -488,7 +533,7 @@ void set_salary(Staff*& person) {
         std::cout << "The user has not worked yet" << std::endl;
         return;
     }
-    while (current && days > counter) {
+    do{
         if (current->is_weekend == true) {
             user_worked_hours += current->worked_hours * 2;
         }
@@ -500,7 +545,8 @@ void set_salary(Staff*& person) {
         }
         current = current->next;
         counter++;
-    }
+    }while(current != temp && days > counter);
+
     user_salary = user_worked_hours * 100;
     // If the user is experienced, add 1000 to the salary
     if (person->salary_bonuses == "experienced") {
@@ -552,7 +598,6 @@ void stock_inquiry(Category*& selected_category) {
 	//This is a function that prints the products of a category
 	//It receives a pointer to the category
 	//Returns nothing
-
 	Category* current = inventory; //Create a pointer to the current node
 	while (current) {
 		if (current->category_name == selected_category->category_name) { //If the current node is the selected category, print the products of the category
@@ -579,7 +624,6 @@ void state_inquiry(string serial_number){
         std::cout << "The product is in the " << current_stage->stage_name << " stage" << std::endl; //Print the current stage of the product
     }
 }
-//------> Evaluate if this functions will stay or we will replace the template conversor <------
 
 void append_category(Category*& category_to_append) {
     //This is a function that appends a category to the inventory
@@ -649,7 +693,6 @@ void add_resources(Resource *&resource_list, Resource *&resource_to_add) {
     current->next = resource_to_add; //The next node of the current node is the resource to add
 }
 
-//------> Evaluate if this functions will stay or we will replace the template conversor <------
 
 void complete_category(const string name){
     //This is a function that completes a category of the inventory
@@ -781,7 +824,6 @@ void append_resource(string category, string stage, string product) {
     while (current != nullptr && current->category_name != category) {
         current = current->next;
     }
-    std::cout << "First while" << std::endl;
     //if the category is not found, exit the function
     if (!current) {
         std::cout << "Category not found" << std::endl;
@@ -792,7 +834,6 @@ void append_resource(string category, string stage, string product) {
     while (current_product != nullptr && current_product->name != product) {
         current_product = current_product->next;
     }
-    std::cout << "Second while" << std::endl;
     //if the product is not found, exit the function
     if (!current_product) {
         std::cout << "Product not found" << std::endl;
@@ -803,7 +844,6 @@ void append_resource(string category, string stage, string product) {
     while (current_stage != nullptr && current_stage->stage_name != stage) {
         current_stage = current_stage->next;
     }
-    std::cout << "Third while" << std::endl;
     //if the stage is not found, exit the function
     if (!current_stage) {
         std::cout << "Stage not found" << std::endl;
@@ -827,6 +867,9 @@ void append_resource(string category, string stage, string product) {
 }
 
 void modify_category(string name){
+    // This is a function that modifies a category
+    // It receives the name of the category
+    // Returns nothing
     Category *current = inventory;
     while(current != nullptr && current->category_name != name){
         current = current->next;
@@ -1055,6 +1098,9 @@ Product* find_product_by_serial_number(const string& serial_number, string categ
 }
 
 bool check_progress(string category_name, string serial_number){
+    // This is a function that checks the progress of a product
+    // It receives the name of the category and the serial number of the product
+    // Returns true if the product is ready for the next stage, false otherwise
     Category *current = inventory;
     Warehouse *temp = warehouse_inventory;
     while(current != nullptr && current->category_name != category_name){
@@ -1249,6 +1295,9 @@ void remove_stock(){
     std::cout << "Resource removed successfully" << std::endl;
 }
 void modify_menu(){
+    // This is a function that prints the modify menu, with consist of the modify options
+    // It receives nothing
+    // Returns nothing
     int option;
     string answer1;
     string answer2;
@@ -1316,8 +1365,10 @@ void staff_menu(){
         std::cout << "3. Remove user" << std::endl;
         std::cout << "4. Register hours" << std::endl;
         std::cout << "5. Consult salary" << std::endl;
-        std::cout << "6. Print staff" << std::endl;
-        std::cout << "7. Exit and return to the main menu" << std::endl;
+        std::cout << "6. Sort by sector" << std::endl;
+        std::cout << "7. Sort by job title" << std::endl;
+        std::cout << "8. Print staff" << std::endl;
+        std::cout << "9. Exit and return to the main menu" << std::endl;
         int option;
         std::cin >> option;
         system("clear");
@@ -1346,10 +1397,18 @@ void staff_menu(){
                 consult_salary(staff_roster);
                 break;
             case 6:
+                // Call the sort_by_sector function, that sorts the staff roster list by job title
+                sort_by_sector();
+                break;
+            case 7:
+                // Call the sort_by_job_title function, that sorts the staff roster list by sector
+                sort_by_job_title();
+                break;
+            case 8:
                 // Call the print_linked_list function, that prints the staff roster list
                 print_linked_list(staff_roster);
                 break;
-            case 7:
+            case 9:
                 // Exit the menu
                 exit_menu = true;
                 return;
@@ -1561,13 +1620,13 @@ void append_stock() {
 
 void set(){
     // Create a Smurfcat category with all the products and stages
-    Category* smurfcat = new Category("Smurfcat");
-    Product* smurfcat_product = new Product("Default", "01");
-    Stage* smurfcat_stage = new Stage("Initial", false);
-    Resource* smurfcat_resource = new Resource("White paint", 5);
-    Resource* smurfcat_resource2 = new Resource("Blue paint", 5);
-    Resource* smurfcat_resource3 = new Resource("Box", 5);
-    Resource* smurfcat_resource4 = new Resource("Bubble wrap", 5);
+    Category* smurfcat = new Category("smurf cat");
+    Product* smurfcat_product = new Product("default", "01");
+    Stage* smurfcat_stage = new Stage("initial", false);
+    Resource* smurfcat_resource = new Resource("white paint", 5);
+    Resource* smurfcat_resource2 = new Resource("blue paint", 3);
+    Resource* smurfcat_resource3 = new Resource("box", 2);
+    Resource* smurfcat_resource4 = new Resource("bubble wrap", 5);
     lineal_append_end(smurfcat_stage->resources, smurfcat_resource);
     lineal_append_end(smurfcat_stage->resources, smurfcat_resource2);
     lineal_append_end(smurfcat_stage->resources, smurfcat_resource3);
@@ -1577,14 +1636,14 @@ void set(){
     append_category(smurfcat);
     
     // Create a StrawberryElephant category with all the products and stages
-    Category* Straberry = new Category("StrawberryElephant");
-    Product* Straberry_product = new Product("Default", "02");
-    Stage* Straberry_stage = new Stage("Initial", false);
-    Resource* Straberry_resource = new Resource("Red paint", 5);
-    Resource* Straberry_resource2 = new Resource("Green paint", 5);
-    Resource* Straberry_resource3 = new Resource("Box", 5);
-    Resource* Straberry_resource4 = new Resource("Bubble wrap", 5);
-    Resource* Straberry_resource5 = new Resource("Strawberry", 5);
+    Category* Straberry = new Category("strawberry elephant");
+    Product* Straberry_product = new Product("default", "02");
+    Stage* Straberry_stage = new Stage("initial", false);
+    Resource* Straberry_resource = new Resource("red paint", 5);
+    Resource* Straberry_resource2 = new Resource("green paint", 7);
+    Resource* Straberry_resource3 = new Resource("box", 5);
+    Resource* Straberry_resource4 = new Resource("bubble wrap", 2);
+    Resource* Straberry_resource5 = new Resource("strawberry", 5);
     lineal_append_end(Straberry_stage->resources, Straberry_resource);
     lineal_append_end(Straberry_stage->resources, Straberry_resource2);
     lineal_append_end(Straberry_stage->resources, Straberry_resource3);
@@ -1598,46 +1657,48 @@ void set(){
 int main(){
     // Create the staff roster list
 	Staff* first_staff = new Staff("1", "boss", "experienced", "managment", "administration"); //Create the first employee, the boss
-	Staff* second_staff = new Staff("2", "employee", "experienced", "production", "production"); //Create the second employee, the employee
+    Staff* second_staff = new Staff("6", "employee", "experienced", "managment", "maintenance"); //Create the second employee, the employee
 	Staff* third_staff = new Staff("3", "boss", "experienced", "managment", "administration"); //Create the first employee, the boss
 	Staff* fourth_staff = new Staff("4", "intern", "experienced", "managment", "maintenance"); //Create the first employee, the boss
 	Staff* fifth_staff = new Staff("5", "boss", "experienced", "managment", "production"); //Create the first employee, the boss
+	Staff* six_staff = new Staff("2", "employee", "experienced", "production", "production"); //Create the second employee, the employee
 
     // Append the staff members to the staff roster list
     double_append_end(staff_roster,first_staff);
-    double_append_end(staff_roster,second_staff);
     double_append_end(staff_roster,third_staff);
     double_append_end(staff_roster,fourth_staff);
     double_append_end(staff_roster,fifth_staff);
+    double_append_end(staff_roster,second_staff);
+    double_append_end(staff_roster,six_staff);
     
     // Create the warehouse inventory
-    Warehouse *plastic = new Warehouse("Plastic", 50);
-    Warehouse *metal = new Warehouse("Cloth", 30);
-    Warehouse *wood = new Warehouse("Wood", 20);
-    Warehouse *blue_paint = new Warehouse("Blue paint", 25);
-    Warehouse *white_paint = new Warehouse("White paint", 25);
-    Warehouse *gold_paint = new Warehouse("Gold paint", 25);
-    Warehouse *purple_paint = new Warehouse("Purple paint", 25);
-    Warehouse *red_paint = new Warehouse("Red paint", 25);
-    Warehouse *green_paint = new Warehouse("Green paint", 25);
-    Warehouse *black_paint = new Warehouse("Black", 25);
-    Warehouse *brown_paint = new Warehouse("Brown paint", 25);
-    Warehouse *brown_mushroom = new Warehouse("Brown mushroom", 10);
-    Warehouse *box = new Warehouse("Box", 70);
-    Warehouse *sticker = new Warehouse("Sticker", 35);
-    Warehouse *bubble_wrap = new Warehouse("Bubble wrap", 40);
-    Warehouse *platinum_mushroom = new Warehouse("Platinum mushroom", 10);
-    Warehouse *silver_box = new Warehouse("Silver box", 5);
-    Warehouse *strawberry = new Warehouse("Strawberry", 30);
-    Warehouse *leather = new Warehouse("Leather", 20);
-    Warehouse *horn = new Warehouse("Horn", 15);
-    Warehouse *leaf = new Warehouse("Leaf", 10);
-    Warehouse *steel = new Warehouse("Steel", 20);
-    Warehouse *lightsaber = new Warehouse("Lightsaber", 10);
-    Warehouse *sword = new Warehouse("Sword", 10);
-    Warehouse *shield = new Warehouse("Shield", 10);
-    Warehouse *wheat = new Warehouse("Wheat", 40);
-    Warehouse *stick = new Warehouse("Stick", 60);
+    Warehouse *plastic = new Warehouse("plastic", 50);
+    Warehouse *metal = new Warehouse("cloth", 30);
+    Warehouse *wood = new Warehouse("wood", 20);
+    Warehouse *blue_paint = new Warehouse("blue paint", 25);
+    Warehouse *white_paint = new Warehouse("white paint", 25);
+    Warehouse *gold_paint = new Warehouse("gold paint", 25);
+    Warehouse *purple_paint = new Warehouse("purple paint", 25);
+    Warehouse *red_paint = new Warehouse("red paint", 25);
+    Warehouse *green_paint = new Warehouse("green paint", 25);
+    Warehouse *black_paint = new Warehouse("black", 25);
+    Warehouse *brown_paint = new Warehouse("brown paint", 25);
+    Warehouse *brown_mushroom = new Warehouse("brown mushroom", 10);
+    Warehouse *box = new Warehouse("box", 70);
+    Warehouse *sticker = new Warehouse("sticker", 35);
+    Warehouse *bubble_wrap = new Warehouse("bubble wrap", 40);
+    Warehouse *platinum_mushroom = new Warehouse("platinum mushroom", 10);
+    Warehouse *silver_box = new Warehouse("silver box", 5);
+    Warehouse *strawberry = new Warehouse("strawberry", 30);
+    Warehouse *leather = new Warehouse("leather", 20);
+    Warehouse *horn = new Warehouse("horn", 15);
+    Warehouse *leaf = new Warehouse("leaf", 10);
+    Warehouse *steel = new Warehouse("steel", 20);
+    Warehouse *lightsaber = new Warehouse("lightsaber", 10);
+    Warehouse *sword = new Warehouse("sword", 10);
+    Warehouse *shield = new Warehouse("shield", 10);
+    Warehouse *wheat = new Warehouse("wheat", 40);
+    Warehouse *stick = new Warehouse("stick", 60);
 
     // Append the resources to the warehouse inventory
     double_circular_append_end(warehouse_inventory, plastic);
