@@ -709,6 +709,15 @@ void complete_category(const string name){
     Stage *stage_list = nullptr;
     Resource *component_list = nullptr;
     bool completed = false;
+
+    Category* current = inventory;
+    while (current) {
+        if (current->category_name == name) {
+            std::cout << "The category already exists" << std::endl;
+            return;
+        }
+        current = current->next;
+    }
     std::cout << "How many products you want to register? " << std::endl;
     int products;
     std::cin >> products;
@@ -777,8 +786,24 @@ void append_product(string category) {
             Product* new_product = new Product();
             std::cout << "Type the name of the product: " << std::endl;
             std::getline(std::cin, new_product->name);
+            Product* current_product = current->products;
+            while (current_product != nullptr) {
+                if (current_product->name == new_product->name) {
+                    std::cout << "The product is already in the category, select modify product if you want do change it" << std::endl;
+                    return;
+                }
+                current_product = current_product->next;
+            }
             std::cout << "Type the serial number of the product: " << std::endl;
             std::getline(std::cin, new_product->serial_number);
+            current_product = current->products;
+            while (current_product != nullptr) {
+                if (current_product->serial_number == new_product->serial_number) {
+                    std::cout << "The serial number is already in use, select modify product if you want do change it" << std::endl;
+                    return;
+                }
+                current_product = current_product->next;
+            }
             std::cout << "How many stages does the product has? " << std::endl;
             int stages;
             std::cin >> stages;
@@ -858,6 +883,14 @@ void append_resource(string category, string stage, string product) {
         Resource* new_resource = new Resource();
         std::cout << "Type the name of the resource needed to build the product" << std::endl;
         std::getline(std::cin, new_resource->name);
+        Resource* current_resource = current_stage->resources;
+        while (current_resource != nullptr) {
+            if (current_resource->name == new_resource->name) {
+                std::cout << "The resource is already in the stage, select modify resource if you want do change it" << std::endl;
+                return;
+            }
+            current_resource = current_resource->next;
+        }
         std::cout << "Type the quantity of the resource needed to build the product" << std::endl;
         std::cin >> new_resource->quantity;
         std::cin.ignore();
@@ -880,6 +913,14 @@ void modify_category(string name){
     }
     std::cout << "Type the new name of the category: " << std::endl;
     std::getline(std::cin, current->category_name);
+    current = inventory;
+    while (current != nullptr) {
+        if (current->category_name == name) {
+            std::cout << "That name is already in use" << std::endl;
+            return;
+        }
+        current = current->next;
+    } 
     std::cout << "Category modified successfully" << std::endl;
 }
 
@@ -1037,6 +1078,7 @@ void add_stage(string category, string product){
         std::cout << "Product not found" << std::endl;
         return;
     }
+    
     int amount;
     std::cout << "How many stages do you want to add? " << std::endl;
     std::cin >> amount;
@@ -1046,6 +1088,14 @@ void add_stage(string category, string product){
         Stage *new_stage = new Stage();
         std::cout << "Type the name of the stage: " << std::endl;
         std::getline(std::cin, new_stage->stage_name);
+        Stage* stage = current_product->current_stage;
+        while (stage) {
+            if (stage->stage_name == new_stage->stage_name) {
+                std::cout << "Stage already exists" << std::endl;
+                return;
+            }
+            stage = stage->next;
+        }
         std::cout << "Type if the stage is completed (true/false): " << std::endl;
         std::cin >> std::boolalpha >> new_stage->completed;
         std::cin.ignore();
@@ -1242,7 +1292,15 @@ void append_new_stock(){
     Warehouse* new_warehouse = new Warehouse();
     std::cin.ignore();
     std::cout << "Type the name of the resource: " << std::endl;
-    std::cin >> new_warehouse->name;
+    std::getline(std::cin, new_warehouse->name);
+    Warehouse* current = warehouse_inventory;
+    do {
+        if (current->name == new_warehouse->name) {
+            std::cout << "The resource is already in the warehouse inventory" << std::endl;
+            return;
+        }
+        current = current->next;
+    } while (current != warehouse_inventory);
     std::cout << "Type the quantity of the resource: " << std::endl;
     std::cin >> new_warehouse->quantity;
     double_circular_append_end(warehouse_inventory, new_warehouse);
