@@ -1032,6 +1032,8 @@ void modify_resource(string category_name, string product_name,string stage_name
     }
     std::cout << "Type the new name of the resource: " << std::endl;
     std::getline(std::cin, current_resource->name);
+    std::cout << "Type the quantity of the resource: " << std::endl;
+    std::cin >> current_resource->quantity;
     std::cout << "Resource modified successfully" << std::endl;
 }
 
@@ -1060,9 +1062,7 @@ void add_stage(string category, string product){
     std::cout << category;
     while(current != nullptr && current->category_name != category){
         current = current->next;
-        std::cout << current->category_name << std::endl;
     }
-    std::cout << std::endl;
     //if the category is not found, exit the function
     if (!current) {
         std::cout << "Category not found" << std::endl;
